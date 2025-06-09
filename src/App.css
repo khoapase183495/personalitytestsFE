@@ -1,4 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  background-color: #ffffff;
+  line-height: 1.5;
+}
+
 .App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   text-align: center;
 }
 
@@ -36,3 +52,26 @@
     transform: rotate(360deg);
   }
 }
+
+section {
+  padding: 4rem 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: 2rem 0;
+  }
+}
+
+/* Bổ sung import font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
