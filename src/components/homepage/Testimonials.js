@@ -22,22 +22,31 @@ function Testimonials() {
       role: "Senior Student"
     }
   ];
-
   return (
     <section className="testimonials">
-      <h2>User Testimonials</h2>
       <div className="testimonials-container">
-        {testimonials.map(testimonial => (
-          <div className="testimonial-card" key={testimonial.id}>
-            <div className="testimonial-content">
-              <p>"{testimonial.text}"</p>
-              <div className="testimonial-author">
-                <strong>{testimonial.name}</strong>
-                <span>{testimonial.role}</span>
+        <h2>User Testimonials</h2>
+        <p className="testimonials-subtitle">
+          Discover what our users say about their personality discovery journey
+        </p>
+        <div className="testimonials-grid">
+          {testimonials.map(testimonial => (
+            <div className="testimonial-card" key={testimonial.id}>
+              <div className="testimonial-content">
+                <p>"{testimonial.text}"</p>
+                <div className="testimonial-author">
+                  <div className="testimonial-avatar">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div className="testimonial-info">
+                    <strong>{testimonial.name}</strong>
+                    <span>{testimonial.role}</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
