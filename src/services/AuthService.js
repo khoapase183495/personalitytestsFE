@@ -4,6 +4,9 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 class AuthService {  // Login user
   static async login(loginData) {
     try {
+      console.log('AuthService: login called with:', loginData);
+      console.log('AuthService: API URL:', `${API_BASE_URL}/api/user/login`);
+      
       const response = await fetch(`${API_BASE_URL}/api/user/login`, {
         method: 'POST',
         headers: {
@@ -11,6 +14,9 @@ class AuthService {  // Login user
         },
         body: JSON.stringify(loginData)
       });
+
+      console.log('AuthService: response status:', response.status);
+      console.log('AuthService: response ok:', response.ok);
 
       if (!response.ok) {
         let errorMessage = 'Login failed. Please try again.';
@@ -42,20 +48,21 @@ class AuthService {  // Login user
           }
         }
         
-        throw new Error(errorMessage);
-      }
+        throw new Error(errorMessage);      }
 
       const data = await response.json();
+      console.log('AuthService: response data:', data);
       
       // Lưu token và thông tin user vào localStorage
       if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data));
+        console.log('AuthService: token and user data saved to localStorage');
       }
       
       return data;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('AuthService: login error:', error);
       
       // Nếu là network error hoặc lỗi không xác định
       if (error.name === 'TypeError' || error.message.includes('fetch')) {
