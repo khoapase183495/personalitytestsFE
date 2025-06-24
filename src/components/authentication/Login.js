@@ -40,8 +40,9 @@ function Login() {
       });
       
       // Redirect to home page after successful login
-      navigate('/');
-    } catch (error) {
+      navigate('/');    } catch (error) {
+      console.log('Login component: caught error:', error);
+      console.log('Login component: error message:', error.message);
       setState(prev => ({ 
         ...prev, 
         error: error.message || 'Connection error. Please try again!' 

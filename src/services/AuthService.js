@@ -20,34 +20,48 @@ class AuthService {  // Login user
 
       if (!response.ok) {
         let errorMessage = 'Login failed. Please try again.';
-        
-        try {
+          try {
           const errorData = await response.json();
+          console.log('AuthService: error data:', errorData);
           
           // Xử lý các loại lỗi khác nhau
           if (response.status === 401) {
             errorMessage = 'Invalid email or password. Please check your credentials.';
           } else if (response.status === 500) {
-            // Kiểm tra nếu là lỗi UserDetailsService
-            if (errorData.message && errorData.message.includes('UserDetailsService')) {
-              errorMessage = 'Invalid email or password. Please check your credentials.';
-            } else if (errorData.message && errorData.message.includes('InternalAuthenticationServiceException')) {
+            // Kiểm tra nếu là lỗi UserDetailsService hoặc Bad credentials
+            console.log('AuthService: checking 500 error message:', errorData.message);
+            if (errorData.message && (
+              errorData.message.includes('UserDetailsService') ||
+              errorData.message.includes('InternalAuthenticationServiceException') ||
+              errorData.message.includes('Bad credentials') ||
+              errorData.message.includes('BadCredentialsException') ||
+              errorData.message.includes('Authentication failed')
+            )) {
+              console.log('AuthService: recognized as authentication error');
               errorMessage = 'Invalid email or password. Please check your credentials.';
             } else {
+              console.log('AuthService: unrecognized 500 error, using original message');
               errorMessage = errorData.message || 'Server error. Please try again later.';
             }
           } else if (response.status === 400) {
             errorMessage = errorData.message || 'Invalid request. Please check your input.';
           } else {
             errorMessage = errorData.message || 'Login failed. Please try again.';
-          }
-        } catch (parseError) {
+          }        } catch (parseError) {
+          console.log('AuthService: failed to parse error response, using status code');
+          console.log('AuthService: parseError:', parseError);
           // Nếu không parse được JSON, sử dụng message dựa trên status code
-          if (response.status === 401 || response.status === 500) {
+          if (response.status === 401) {
             errorMessage = 'Invalid email or password. Please check your credentials.';
-          }
+          } else if (response.status === 500) {
+            // Lỗi 500 thường là BadCredentialsException từ Spring Security
+            console.log('AuthService: treating 500 as authentication error');
+            errorMessage = 'Invalid email or password. Please check your credentials.';
+          } else if (response.status === 400) {
+            errorMessage = 'Invalid email or password. Please check your credentials.';          }
         }
         
+        console.log('AuthService: final error message:', errorMessage);
         throw new Error(errorMessage);      }
 
       const data = await response.json();

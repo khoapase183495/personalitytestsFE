@@ -42,11 +42,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
-  }, []);
-  const login = async (loginData) => {
+  }, []);  const login = async (loginData) => {
     try {
       setLoading(true);
-      const response = await AuthService.login(loginData);      const userData = {
+      console.log('AuthContext: login called');
+      const response = await AuthService.login(loginData);
+      console.log('AuthContext: login successful, response:', response);
+      
+      const userData = {
         id: response.id,
         email: response.email,
         phone: response.phone,
@@ -58,6 +61,8 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return response;
     } catch (error) {
+      console.log('AuthContext: login error caught:', error);
+      console.log('AuthContext: error message:', error.message);
       throw error;
     } finally {
       setLoading(false);
