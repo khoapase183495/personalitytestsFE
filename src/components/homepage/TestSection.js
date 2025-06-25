@@ -33,10 +33,10 @@ function TestSection() {
       link: '/tests/big-five'
     }
   ];
-
   return (
     <section className="test-section">
-      <h2>Personality Tests</h2>
+      <h2>Discover Your Personality</h2>
+      <p>Take our scientifically-backed personality tests to gain deep insights into your character, motivations, and potential.</p>
       <div className="test-grid">
         {tests.map(test => (
           <TestCard 

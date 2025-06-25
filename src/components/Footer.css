@@ -1,42 +1,83 @@
 .footer {
-  background-color: #242c3a;
-  color: #b0b7c3;
-  padding-top: 3rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: rgba(255, 255, 255, 0.9);
+  padding-top: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" /><stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" /></radialGradient></defs><circle cx="10" cy="10" r="1" fill="url(%23grad)"/><circle cx="30" cy="5" r="1" fill="url(%23grad)"/><circle cx="50" cy="15" r="1" fill="url(%23grad)"/><circle cx="70" cy="8" r="1" fill="url(%23grad)"/><circle cx="90" cy="12" r="1" fill="url(%23grad)"/></svg>') repeat;
+  opacity: 0.3;
+  animation: float 20s infinite linear;
+}
+
+@keyframes float {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(100px); }
 }
 
 .footer-container {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 2rem;
+  gap: 3rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem 2rem;
+  padding: 0 2rem 3rem;
+  position: relative;
+  z-index: 1;
 }
 
 .footer-section h3 {
   color: white;
-  font-size: 1.2rem;
-  margin-bottom: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(45deg, #fff, #f0f8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .footer-section p {
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  opacity: 0.9;
 }
 
 .social-media {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .social-media a {
-  color: #b0b7c3;
-  font-size: 1.2rem;
-  transition: color 0.3s;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.4rem;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .social-media a:hover {
   color: white;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .footer-section ul {
@@ -45,36 +86,95 @@
 }
 
 .footer-section ul li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
 }
 
 .footer-section ul li a {
-  color: #b0b7c3;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  position: relative;
+  padding-left: 0;
 }
 
 .footer-section ul li a:hover {
   color: white;
+  padding-left: 8px;
+}
+
+.footer-section ul li a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(45deg, #fff, #f0f8ff);
+  transition: width 0.3s ease;
+}
+
+.footer-section ul li a:hover::before {
+  width: 4px;
 }
 
 .footer-bottom {
   text-align: center;
-  padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .footer-bottom p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding-top: 3rem;
+  }
+  
   .footer-container {
     grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1.5rem 2rem;
   }
   
   .footer-section {
     margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .footer-section h3 {
+    font-size: 1.2rem;
+  }
+  
+  .social-media {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-container {
+    padding: 0 1rem 2rem;
+  }
+  
+  .footer-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .footer-section p {
+    font-size: 0.9rem;
+  }
+  
+  .social-media a {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
 }

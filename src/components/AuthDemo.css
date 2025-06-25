@@ -1,0 +1,103 @@
+.auth-demo-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+}
+
+.auth-toggle {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0 1rem 0;
+  gap: 0;
+}
+
+.toggle-button {
+  padding: 0.8rem 2rem;
+  border: 2px solid #3d348b;
+  background-color: white;
+  color: #3d348b;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.toggle-button:first-child {
+  border-radius: 8px 0 0 8px;
+  border-right: 1px solid #3d348b;
+}
+
+.toggle-button:last-child {
+  border-radius: 0 8px 8px 0;
+  border-left: 1px solid #3d348b;
+}
+
+.toggle-button.active {
+  background-color: #3d348b;
+  color: white;
+}
+
+.toggle-button:hover:not(.active) {
+  background-color: #f8f9fa;
+}
+
+.welcome-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.welcome-card > div {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.welcome-card h2 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.welcome-card p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.logout-button {
+  padding: 0.8rem 1.5rem;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 1.5rem;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-1px);
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .auth-toggle {
+    padding: 1rem;
+  }
+  
+  .toggle-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
