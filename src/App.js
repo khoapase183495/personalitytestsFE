@@ -7,6 +7,9 @@ import HomePage from './components/homepage/HomePage';
 import Footer from './components/Footer';
 import Login from './components/authentication/Login';
 import Register from './components/authentication/Register';
+import TestDetail from './components/tests/TestDetail';
+import Question from './components/tests/Question';
+import TestResults from './components/tests/TestResults';
 
 function App() {
   return (
@@ -18,7 +21,9 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            {/* Thêm các routes khác ở đây */}
+            <Route path="/tests/:testSlug" element={<Question />} />
+            <Route path="/tests/:testSlug/details" element={<TestDetail />} />
+            <Route path="/tests/:testSlug/results" element={<TestResults />} />
             <Route path="/tests" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Tests - Coming Soon!</div>} />
             <Route path="/articles" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Articles - Coming Soon!</div>} />
             <Route path="/about" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang About - Coming Soon!</div>} />

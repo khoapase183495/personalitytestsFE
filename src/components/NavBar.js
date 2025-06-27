@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import NavBarDropdown from "./NavBarDropdown";
 import "./NavBar.css";
 
 function NavBar() {
@@ -21,20 +22,7 @@ function NavBar() {
             <Link to="/tests" className="nav-link">
               Personality Tests
             </Link>
-            <div className="dropdown-menu">
-              <Link to="/tests/mbti" className="dropdown-item">
-                MBTI
-              </Link>
-              <Link to="/tests/enneagram" className="dropdown-item">
-                Enneagram
-              </Link>
-              <Link to="/tests/big-five" className="dropdown-item">
-                Big Five
-              </Link>
-              <Link to="/tests/career" className="dropdown-item">
-                Career Guidance
-              </Link>
-            </div>
+            <NavBarDropdown />
           </div>
           <div className="nav-item">
             <Link to="/articles" className="nav-link">
