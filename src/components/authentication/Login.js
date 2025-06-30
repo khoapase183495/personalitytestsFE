@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import './Login.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import "./Login.css";
 
 function Login() {
   const { login } = useAuth();
@@ -10,45 +10,46 @@ function Login() {
     isLoading: false,
     error: null,
     formData: {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    },
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       formData: {
         ...prev.formData,
-        [name]: value
+        [name]: value,
       },
-      error: null
+      error: null,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!state.formData.email || !state.formData.password) {
-      setState(prev => ({ ...prev, error: 'Please fill in all fields' }));
+      setState((prev) => ({ ...prev, error: "Please fill in all fields" }));
       return;
-    }    setState(prev => ({ ...prev, isLoading: true, error: null }));    try {
+    }
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
+    try {
       await login({
         email: state.formData.email,
-        password: state.formData.password
+        password: state.formData.password,
       });
-      
+
       // Redirect to home page after successful login
-      navigate('/');    } catch (error) {
-      console.log('Login component: caught error:', error);
-      console.log('Login component: error message:', error.message);
-      setState(prev => ({ 
-        ...prev, 
-        error: error.message || 'Connection error. Please try again!' 
+      navigate("/");
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        error: error.message || "Connection error. Please try again!",
       }));
     } finally {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
@@ -61,11 +62,7 @@ function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
-          {state.error && (
-            <div className="error-message">
-              {state.error}
-            </div>
-          )}
+          {state.error && <div className="error-message">{state.error}</div>}
 
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
@@ -93,17 +90,19 @@ function Login() {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="login-button"
             disabled={state.isLoading}
           >
-            {state.isLoading ? 'Signing In...' : 'Sign In'}
+            {state.isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
         <div className="login-footer">
-          <p>Don't have an account? <a href="/register">Sign up now</a></p>
+          <p>
+            Don't have an account? <a href="/register">Sign up now</a>
+          </p>
         </div>
       </div>
     </div>
