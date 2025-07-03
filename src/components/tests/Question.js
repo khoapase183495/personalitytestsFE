@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, Radio, Button, Progress, Alert, Spin, Typography, Row, Col } from 'antd';
 import { ArrowLeftOutlined, ArrowRightOutlined, CheckOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useAuth } from '../../contexts/AuthContext';
 import QuestionService from '../../services/QuestionService';
 import TestService from '../../services/TestService';
+import TestSessionService from '../../services/TestSessionService';
 import './Question.css';
 
 const { Title, Text } = Typography;
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 function Question() {
   const { testSlug } = useParams();
@@ -21,7 +26,9 @@ function Question() {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-
+  
+  const query = useQuery();
+  const sessionId = query.get('sessionId');
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -92,11 +99,10 @@ function Question() {
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      await QuestionService.submitAnswers(testInfo.id, answers);
-      // Navigate to results page or show success message
-      navigate(`/tests/${testSlug}/results`);
+      await TestSessionService.completeSession(sessionId, answers);
+      // Navigate to results page, truyền sessionId
+      navigate(`/tests/${testSlug}/results?sessionId=${sessionId}`);
     } catch (error) {
-      console.error('Error submitting answers:', error);
       setError('Failed to submit answers. Please try again.');
     } finally {
       setSubmitting(false);

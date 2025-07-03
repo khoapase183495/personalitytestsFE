@@ -4,6 +4,7 @@ import { Card, Button, Spin, Alert, Typography, Breadcrumb } from 'antd';
 import { PlayCircleOutlined, HomeOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useAuth } from '../../contexts/AuthContext';
 import TestService from '../../services/TestService';
+import TestSessionService from '../../services/TestSessionService';
 import LoginModal from '../authentication/LoginModal';
 import './TestDetail.css';
 
@@ -76,14 +77,23 @@ function TestDetail() {
     return originalDescription;
   };
 
-  const handleTakeTest = () => {
-    if (!isAuthenticated) {
-      setShowLoginModal(true);
-    } else {
-      // Navigate to test questions page
-      navigate(`/tests/${testSlug}`);
+  const handleTakeTest = async () => {
+  if (!isAuthenticated) {
+    setShowLoginModal(true);
+  } else {
+    try {
+      setLoading(true);
+      // Tạo test session mới
+      const session = await TestSessionService.createSession(test.id);
+      // Điều hướng sang trang làm bài test, truyền sessionId qua query param
+      navigate(`/tests/${testSlug}?sessionId=${session.sessionId}`);
+    } catch (err) {
+      setError('Failed to create test session. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+};
 
   const handleBackToHome = () => {
     navigate('/');
