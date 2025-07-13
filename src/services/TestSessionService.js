@@ -59,8 +59,7 @@ class TestSessionService {
         throw new Error(errorText || 'Failed to submit test answers');
       }
 
-      const result = await response.json();
-      return result;
+      return;
     } catch (error) {
       console.error('TestSessionService: completeSession error:', error);
       throw error;
