@@ -1,14 +1,23 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import NavBarDropdown from "./NavBarDropdown";
 import "./NavBar.css";
 
 function NavBar() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  // Auto-redirect admin users to admin dashboard
+  useEffect(() => {
+    if (isAuthenticated && isAdmin && window.location.pathname === '/') {
+      navigate('/admin');
+    }
+  }, [isAuthenticated, isAdmin, navigate]);
 
   const handleLogout = () => {
     logout();
+    navigate('/');
   };
 
   return (
@@ -18,26 +27,29 @@ function NavBar() {
           PersonalityVN
         </Link>
         <div className="nav-menu">
-          <div className="nav-item">
-            <Link to="/tests" className="nav-link">
-              Personality Tests
-            </Link>
-            <NavBarDropdown />
-          </div>
-          <div className="nav-item">
-            <Link to="/articles" className="nav-link">
-              Articles
-            </Link>
-          </div>
-          <div className="nav-item">
-            <Link to="/about" className="nav-link">
-              About Us
-            </Link>
-          </div>        </div>
-        <div className="nav-auth">          {isAuthenticated ? (
+          {!isAdmin && (
+            <>
+              <div className="nav-item">
+                <Link to="/tests" className="nav-link">
+                  Personality Tests
+                </Link>
+                <NavBarDropdown />
+              </div>
+              <div className="nav-item">
+                <Link to="/about" className="nav-link">
+                  About Us
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="nav-auth">
+          {" "}
+          {isAuthenticated ? (
             <div className="user-menu">
               <span className="user-name">
-                Hello, {user?.username || user?.email}
+                Hello, {user?.fullname || user?.username || user?.email}
+                {isAdmin && <span className="admin-badge"> (Admin)</span>}
               </span>
               <button onClick={handleLogout} className="logout-button">
                 Logout

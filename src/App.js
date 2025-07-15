@@ -10,6 +10,8 @@ import Register from './components/authentication/Register';
 import TestDetail from './components/tests/TestDetail';
 import Question from './components/tests/Question';
 import TestResults from './components/tests/TestResults';
+import AdminDashboard from './components/admin/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -21,9 +23,38 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/tests/:testSlug" element={<Question />} />
-            <Route path="/tests/:testSlug/details" element={<TestDetail />} />
-            <Route path="/tests/:testSlug/results" element={<TestResults />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/tests/:testSlug" 
+              element={
+                <ProtectedRoute>
+                  <Question />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/tests/:testSlug/details" 
+              element={
+                <ProtectedRoute>
+                  <TestDetail />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/tests/:testSlug/results" 
+              element={
+                <ProtectedRoute>
+                  <TestResults />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="/tests" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Tests - Coming Soon!</div>} />
             <Route path="/articles" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Articles - Coming Soon!</div>} />
             <Route path="/about" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang About - Coming Soon!</div>} />
