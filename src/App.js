@@ -11,6 +11,7 @@ import TestDetail from './components/tests/TestDetail';
 import Question from './components/tests/Question';
 import TestResults from './components/tests/TestResults';
 import UserProfile from './components/UserProfile';
+import 'antd/dist/reset.css';
 
 function App() {
   return (

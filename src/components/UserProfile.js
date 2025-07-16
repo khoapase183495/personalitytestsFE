@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { Card, Typography, Modal, message } from "antd";
 import ProfileService from "../services/ProfileService";
 import "./UserProfile.css";
-
+message.success("Test notification!");
 const { Title, Paragraph } = Typography;
 
 function UserProfile() {
@@ -42,42 +42,58 @@ function UserProfile() {
   };
 
   const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    setEditLoading(true);
-    setEditError(null);
-    try {
-      await ProfileService.updateAccount(user.id, editForm);
-      message.success("Profile updated successfully!");
-      setEditVisible(false);
-      // Optionally, refresh user info here
-    } catch (error) {
-      setEditError(error.message || "Failed to update profile.");
-    } finally {
-      setEditLoading(false);
-    }
-  };
+  e.preventDefault();
+  setEditLoading(true);
+  setEditError(null);
+  try {
+    await ProfileService.updateAccount(user.id, editForm);
+    message.success("Profile updated successfully!");
+    setEditVisible(false);
 
-  // Reset Password Handlers
-  const handleResetSubmit = async (e) => {
-    e.preventDefault();
-    setResetLoading(true);
-    setResetError(null);
-    if (!newPassword || newPassword.length < 6) {
-      setResetError("Password must be at least 6 characters.");
-      setResetLoading(false);
-      return;
-    }
-    try {
-      await ProfileService.resetPassword(newPassword);
+    // Update localStorage with new user info
+    const updatedUser = {
+      ...user,
+      email: editForm.email,
+      username: editForm.username,
+      phone: editForm.phone,
+    };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  } catch (error) {
+    setEditError(error.message || "Failed to update profile.");
+  } finally {
+    setEditLoading(false);
+  }
+};
+
+const handleResetSubmit = async (e) => {
+  e.preventDefault();
+  setResetLoading(true);
+  setResetError(null);
+  if (!newPassword || newPassword.length < 6) {
+    setResetError("Password must be at least 6 characters.");
+    setResetLoading(false);
+    return;
+  }
+  try {
+    const result = await ProfileService.resetPassword(newPassword);
+    // Show backend message if present, otherwise default
+    if (typeof result === "string" && result === "Reset successfully") {
       message.success("Password reset successfully!");
-      setResetVisible(false);
-      setNewPassword("");
-    } catch (error) {
-      setResetError(error.message || "Failed to reset password.");
-    } finally {
-      setResetLoading(false);
+    } else {
+      message.success("Password reset successfully!");
     }
-  };
+    setResetVisible(false);
+    setNewPassword("");
+  } catch (error) {
+    setResetError(error.message || "Failed to reset password.");
+  } finally {
+    setResetLoading(false);
+  }
+};
 
   return (
     <div className="user-profile-container">

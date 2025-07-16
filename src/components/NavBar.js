@@ -23,24 +23,7 @@ function NavBar() {
         <Link to="/" className="navbar-logo">
           PersonalityVN
         </Link>
-        {isAuthenticated && (
-          <button
-            className="profile-button"
-            onClick={handleProfileClick}
-            title="View Profile"
-            style={{
-              marginLeft: 12,
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              fontSize: 22,
-              color: "#3d348b",
-              verticalAlign: "middle"
-            }}
-          >
-            <UserOutlined />
-          </button>
-        )}
+        
         <div className="nav-menu">
           <div className="nav-item">
             <Link to="/tests" className="nav-link">
@@ -65,6 +48,24 @@ function NavBar() {
               <span className="user-name">
                 Hello, {user?.username || user?.email}
               </span>
+              {isAuthenticated && (
+          <button
+            className="profile-button"
+            onClick={handleProfileClick}
+            title="View Profile"
+            style={{
+              marginLeft: 12,
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 22,
+              color: "#3d348b",
+              verticalAlign: "middle"
+            }}
+          >
+            <UserOutlined />
+          </button>
+        )}
               <button onClick={handleLogout} className="logout-button">
                 Logout
               </button>
