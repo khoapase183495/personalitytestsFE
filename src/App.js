@@ -11,6 +11,7 @@ import TestDetail from './components/tests/TestDetail';
 import Question from './components/tests/Question';
 import TestResults from './components/tests/TestResults';
 import AdminDashboard from './components/admin/AdminDashboard';
+import UserDetails from './components/admin/UserDetails/page';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -28,6 +29,14 @@ function App() {
               element={
                 <ProtectedRoute requireAdmin={true}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users/:userId" 
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <UserDetails />
                 </ProtectedRoute>
               } 
             />

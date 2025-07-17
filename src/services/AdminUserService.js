@@ -31,7 +31,7 @@ class AdminUserService {
             const errorData = await response.text();
             errorMessage += `: ${errorData}`;
           } catch (parseError) {
-            console.log('AdminUserService: Could not parse error response');
+            // Silent error parsing
           }
         }
         
@@ -39,7 +39,6 @@ class AdminUserService {
       }
 
       const data = await response.json();
-      console.log('AdminUserService: Successfully fetched users:', data);
       return data;
       
     } catch (error) {
@@ -60,7 +59,14 @@ class AdminUserService {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${API_BASE_URL}/api/user/updateAccount/${userId}`, {
+      // Ensure userId is a valid number
+      const userIdNumber = parseInt(userId, 10);
+      if (isNaN(userIdNumber)) {
+        throw new Error('Invalid user ID: must be a number');
+      }
+      
+      // Use path parameter endpoint
+      const response = await fetch(`${API_BASE_URL}/api/user/getById/${userIdNumber}`, {
         method: 'GET',
         headers: headers
       });
@@ -79,7 +85,7 @@ class AdminUserService {
             const errorData = await response.text();
             errorMessage += `: ${errorData}`;
           } catch (parseError) {
-            console.log('AdminUserService: Could not parse error response');
+            // Silent error parsing
           }
         }
         
@@ -87,7 +93,6 @@ class AdminUserService {
       }
 
       const data = await response.json();
-      console.log('AdminUserService: Successfully fetched user:', data);
       return data;
       
     } catch (error) {
@@ -108,7 +113,7 @@ class AdminUserService {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${API_BASE_URL}/api/user/admin/create`, {
+      const response = await fetch(`${API_BASE_URL}/api/user/register`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(userData)
@@ -127,14 +132,13 @@ class AdminUserService {
             errorMessage = errorData.message || errorMessage;
           }
         } catch (parseError) {
-          console.log('AdminUserService: Could not parse error response');
+          // Silent error parsing
         }
         
         throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      console.log('AdminUserService: Successfully created user:', data);
       return data;
       
     } catch (error) {
@@ -167,8 +171,6 @@ class AdminUserService {
         
         try {
           responseText = await response.text();
-          console.log('AdminUserService: Error response text:', responseText);
-          
           const errorData = JSON.parse(responseText);
           if (response.status === 404) {
             errorMessage = 'User not found';
@@ -182,16 +184,14 @@ class AdminUserService {
             errorMessage = errorData.message || errorMessage;
           }
         } catch (parseError) {
-          console.log('AdminUserService: Could not parse error response, raw text:', responseText);
           errorMessage = `HTTP ${response.status}: ${responseText || 'Unknown error'}`;
         }
         
         throw new Error(errorMessage);
       }
 
-      // Backend trả về text "Update Success", không phải JSON
+      // Backend returns text "Update Success", not JSON
       const responseText = await response.text();
-      console.log('AdminUserService: Successfully updated user:', responseText);
       return { message: responseText, success: true };
       
     } catch (error) {
@@ -200,9 +200,13 @@ class AdminUserService {
     }
   }
 
-  // Delete user (admin only)
+  // Delete user (admin only) - Temporarily disabled as backend endpoint not available
   static async deleteUser(userId) {
     try {
+      // TODO: Backend endpoint DELETE /api/user/{id} not implemented yet
+      throw new Error('Delete function is temporarily unavailable. Please contact backend team to implement DELETE /api/user/{id} endpoint.');
+      
+      /* Original code when backend endpoint is ready:
       const token = localStorage.getItem('token');
       const headers = {
         'Content-Type': 'application/json',
@@ -236,6 +240,7 @@ class AdminUserService {
 
       console.log('AdminUserService: Successfully deleted user');
       return true;
+      */
       
     } catch (error) {
       console.error('AdminUserService: Error deleting user:', error);
@@ -243,35 +248,17 @@ class AdminUserService {
     }
   }
 
-  // Get user statistics (admin only)
+  // Get user statistics (admin only) - Temporarily disabled as backend endpoint not available
   static async getUserStats() {
-    try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-      
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch(`${API_BASE_URL}/api/user/stats`, {
-        method: 'GET',
-        headers: headers
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('AdminUserService: Successfully fetched user stats:', data);
-      return data;
-      
-    } catch (error) {
-      console.error('AdminUserService: Error fetching user stats:', error);
-      throw error;
-    }
+    // TODO: Backend endpoint GET /api/user/stats not implemented yet
+    // Return empty stats for now, frontend will calculate from users data
+    return {
+      totalUsers: 0,
+      adminCount: 0,
+      parentCount: 0,
+      studentCount: 0,
+      message: 'Stats calculated from frontend data'
+    };
   }
 }
 

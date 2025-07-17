@@ -1,25 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Tabs, Table, Button, Modal, Form, Input, Select, message, Popconfirm, Space, Drawer, Descriptions, Tag } from 'antd';
-import { UserOutlined, FileTextOutlined, PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { Card, Tabs, Table, Button, Modal, Form, Input, Select, message, Space, Popconfirm } from 'antd';
+import { UserOutlined, FileTextOutlined, PlusOutlined, EditOutlined, EyeOutlined, SearchOutlined, DeleteOutlined, QuestionCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useAuth } from '../../contexts/AuthContext';
 import AdminUserService from '../../services/AdminUserService';
-import TestService from '../../services/TestService';
+import AdminTestService from '../../services/AdminTestService';
+import AdminQuestionService from '../../services/AdminQuestionService';
 import './AdminDashboard.css';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
+const { TextArea } = Input;
 
 function AdminDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [tests, setTests] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [selectedTest, setSelectedTest] = useState(null);
   const [userModalVisible, setUserModalVisible] = useState(false);
+  const [testModalVisible, setTestModalVisible] = useState(false);
+  const [questionModalVisible, setQuestionModalVisible] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [viewUserDrawer, setViewUserDrawer] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [editingTest, setEditingTest] = useState(null);
+  const [editingQuestion, setEditingQuestion] = useState(null);
+
   const [searchText, setSearchText] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState('users');
   const [stats, setStats] = useState({
     totalUsers: 0,
     adminCount: 0,
@@ -27,6 +37,8 @@ function AdminDashboard() {
     studentCount: 0
   });
   const [form] = Form.useForm();
+  const [testForm] = Form.useForm();
+  const [questionForm] = Form.useForm();
 
   useEffect(() => {
     loadUsers();
@@ -71,7 +83,7 @@ function AdminDashboard() {
 
   const loadTests = async () => {
     try {
-      const response = await TestService.getAllTests();
+      const response = await AdminTestService.getAllTests();
       setTests(response);
     } catch (error) {
       message.error('Failed to load tests');
@@ -102,31 +114,184 @@ function AdminDashboard() {
     setUserModalVisible(true);
   };
 
-  const handleDeleteUser = async (userId) => {
-    try {
-      await AdminUserService.deleteUser(userId);
-      message.success('User deleted successfully');
-      loadUsers();
-    } catch (error) {
-      message.error('Failed to delete user');
-      console.error('Error deleting user:', error);
-    }
+  // Delete function temporarily removed - backend endpoint not available
+  // const handleDeleteUser = async (userId) => { ... }
+
+  const handleViewUser = (userId) => {
+    // Navigate to dedicated user details page
+    navigate(`/admin/users/${userId}`);
   };
 
-  const handleViewUser = async (userId) => {
+  // Test Management Functions
+  const handleCreateTest = () => {
+    setEditingTest(null);
+    testForm.resetFields();
+    setTestModalVisible(true);
+  };
+
+  const handleEditTest = (record) => {
+    setEditingTest(record);
+    testForm.setFieldsValue({
+      title: record.title || '',
+      description: record.description || ''
+    });
+    setTestModalVisible(true);
+  };
+
+  const handleSubmitTest = async (values) => {
     try {
       setLoading(true);
-      const user = await AdminUserService.getUserById(userId);
-      setSelectedUser(user);
-      setViewUserDrawer(true);
+      
+      if (editingTest) {
+        await AdminTestService.updateTest(editingTest.id, values);
+        message.success('Test updated successfully');
+      } else {
+        await AdminTestService.createTest(values);
+        message.success('Test created successfully');
+      }
+      
+      setTestModalVisible(false);
+      testForm.resetFields();
+      setEditingTest(null);
+      loadTests();
     } catch (error) {
-      message.error('Failed to load user details');
-      console.error('Error loading user details:', error);
+      message.error(`Failed to ${editingTest ? 'update' : 'create'} test: ` + error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDeleteTest = async (testId) => {
+    try {
+      await AdminTestService.deleteTest(testId);
+      message.success('Test deleted successfully');
+      loadTests();
+    } catch (error) {
+      message.error('Failed to delete test: ' + error.message);
+    }
+  };
+
+  // Question Management Functions
+  const loadQuestionsByTest = async (testId) => {
+    try {
+      setLoading(true);
+      const response = await AdminQuestionService.getQuestionsByTestId(testId);
+      setQuestions(response || []);
+      
+      if (!response || response.length === 0) {
+        message.info('No questions found for this test. You can create new questions using the buttons above.');
+      }
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      setQuestions([]);
+      
+      if (error.message.includes('500') || error.message.includes('Server error')) {
+        message.warning('Question service is temporarily unavailable. You can still create new questions.');
+      } else {
+        message.error('Failed to load questions: ' + error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewTestQuestions = (testRecord) => {
+    setSelectedTest(testRecord);
+    loadQuestionsByTest(testRecord.id);
+    setActiveTab('questions');
+  };
+
+  const handleBackToTests = () => {
+    setSelectedTest(null);
+    setQuestions([]);
+    setActiveTab('tests');
+  };
+
+  const handleCreateQuestion = () => {
+    if (!selectedTest) {
+      message.warning('Please select a test first');
+      return;
+    }
+    setEditingQuestion(null);
+    questionForm.resetFields();
+    setQuestionModalVisible(true);
+  };
+
+  const handleEditQuestion = (record) => {
+    setEditingQuestion(record);
+    questionForm.setFieldsValue({
+      content: record.content || '',
+      testId: selectedTest?.id || record.testId
+    });
+    setQuestionModalVisible(true);
+  };
+
+  const handleSubmitQuestion = async (values) => {
+    try {
+      setLoading(true);
+      
+      const questionData = {
+        content: values.content,
+        testId: selectedTest?.id || values.testId
+      };
+      
+      if (editingQuestion) {
+        await AdminQuestionService.updateQuestion(editingQuestion.id, questionData);
+        message.success('Question updated successfully');
+      } else {
+        await AdminQuestionService.createQuestion(questionData);
+        message.success('Question created successfully');
+      }
+      
+      setQuestionModalVisible(false);
+      questionForm.resetFields();
+      setEditingQuestion(null);
+      loadQuestionsByTest(selectedTest?.id);
+    } catch (error) {
+      message.error(`Failed to ${editingQuestion ? 'update' : 'create'} question: ` + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteQuestion = async (questionId) => {
+    try {
+      setLoading(true);
+      
+      // Try soft delete first
+      try {
+        await AdminQuestionService.deleteQuestion(questionId);
+        message.success('Question deleted successfully');
+      } catch (deleteError) {
+        console.warn('Direct delete failed, trying alternative method:', deleteError.message);
+        
+        // If delete fails, try hide method as workaround
+        try {
+          await AdminQuestionService.hideQuestion(questionId);
+          message.success('Question removed from list (soft delete)');
+        } catch (hideError) {
+          console.error('Both delete methods failed:', hideError.message);
+          
+          // If both fail, at least hide it from frontend temporarily
+          setQuestions(prevQuestions => 
+            prevQuestions.filter(q => q.id !== questionId)
+          );
+          
+          message.warning('Question removed from display. Note: Backend deletion may have failed due to database constraints or server issues. The question may still exist in the database.');
+          return; // Exit early since we handled it manually
+        }
+      }
+      
+      // Reload questions after successful deletion
+      loadQuestionsByTest(selectedTest?.id);
+    } catch (error) {
+      message.error('Failed to delete question: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // User Management Functions
   const handleSubmitUser = async (values) => {
     try {
       setLoading(true);
@@ -249,6 +414,8 @@ function AdminDashboard() {
           >
             Edit
           </Button>
+          {/* Delete button temporarily removed - backend endpoint not available */}
+          {/* 
           <Popconfirm
             title="Are you sure you want to delete this user?"
             onConfirm={() => handleDeleteUser(record.id)}
@@ -264,6 +431,64 @@ function AdminDashboard() {
             >
               Delete
             </Button>
+          </Popconfirm>
+          */}
+        </Space>
+      ),
+    },
+  ];
+
+  const questionColumns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 70,
+    },
+    {
+      title: 'Content',
+      dataIndex: 'content',
+      key: 'content',
+      ellipsis: true,
+    },
+    {
+      title: 'Test ID',
+      dataIndex: 'testId',
+      key: 'testId',
+      width: 100,
+    },
+    {
+      title: 'Created At',
+      dataIndex: 'createAt',
+      key: 'createAt',
+      width: 120,
+      render: (date) => date ? new Date(date).toLocaleDateString() : 'N/A',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 120,
+      render: (_, record) => (
+        <Space size="small">
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => handleEditQuestion(record)}
+            size="small"
+            type="primary"
+            ghost
+          />
+          <Popconfirm
+            title="Are you sure you want to delete this question?"
+            onConfirm={() => handleDeleteQuestion(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              icon={<DeleteOutlined />}
+              size="small"
+              type="primary"
+              danger
+            />
           </Popconfirm>
         </Space>
       ),
@@ -300,6 +525,44 @@ function AdminDashboard() {
       key: 'user',
       render: (user) => user?.name || 'System',
     },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 180,
+      render: (_, record) => (
+        <Space size="small">
+          <Button
+            icon={<QuestionCircleOutlined />}
+            onClick={() => handleViewTestQuestions(record)}
+            size="small"
+            type="default"
+            title="View Questions"
+          >
+            Questions
+          </Button>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => handleEditTest(record)}
+            size="small"
+            type="primary"
+            ghost
+          />
+          <Popconfirm
+            title="Are you sure you want to delete this test?"
+            onConfirm={() => handleDeleteTest(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              icon={<DeleteOutlined />}
+              size="small"
+              type="primary"
+              danger
+            />
+          </Popconfirm>
+        </Space>
+      ),
+    },
   ];
 
   return (
@@ -330,7 +593,12 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <Tabs defaultActiveKey="users" className="admin-tabs">
+        <Tabs 
+          defaultActiveKey="users" 
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          className="admin-tabs"
+        >
           <TabPane
             tab={
               <span>
@@ -399,14 +667,16 @@ function AdminDashboard() {
             <Card className="admin-card">
               <div className="table-header">
                 <h2>All Tests</h2>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => message.info('Test creation feature coming soon!')}
-                  className="create-user-btn-small"
-                >
-                  Create Test
-                </Button>
+                <Space>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={handleCreateTest}
+                    className="create-user-btn-small"
+                  >
+                    Create Test
+                  </Button>
+                </Space>
               </div>
               <Table
                 columns={testColumns}
@@ -421,6 +691,72 @@ function AdminDashboard() {
                     `${range[0]}-${range[1]} of ${total} tests`,
                 }}
               />
+            </Card>
+          </TabPane>
+
+          <TabPane
+            tab={
+              <span>
+                <QuestionCircleOutlined />
+                Question Management
+              </span>
+            }
+            key="questions"
+          >
+            <Card className="admin-card">
+              {selectedTest ? (
+                <>
+                  <div className="table-header">
+                    <div>
+                      <Button
+                        icon={<ArrowLeftOutlined />}
+                        onClick={handleBackToTests}
+                        style={{ marginRight: 16 }}
+                      >
+                        Back to Tests
+                      </Button>
+                      <h2 style={{ display: 'inline', marginLeft: 8 }}>
+                        Questions for "{selectedTest.title}"
+                      </h2>
+                    </div>
+                    <Space>
+                      <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={handleCreateQuestion}
+                        className="create-user-btn-small"
+                      >
+                        Create Question
+                      </Button>
+                    </Space>
+                  </div>
+                  <Table
+                    columns={questionColumns}
+                    dataSource={questions}
+                    rowKey="id"
+                    loading={loading}
+                    pagination={{
+                      pageSize: 10,
+                      showSizeChanger: true,
+                      showQuickJumper: true,
+                      showTotal: (total, range) => 
+                        `${range[0]}-${range[1]} of ${total} questions`,
+                    }}
+                  />
+                </>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+                  <QuestionCircleOutlined style={{ fontSize: '48px', color: '#ccc', marginBottom: 16 }} />
+                  <h3>No Test Selected</h3>
+                  <p>Please go to Test Management and click "Questions" button on any test to view its questions.</p>
+                  <Button 
+                    type="primary" 
+                    onClick={() => setActiveTab('tests')}
+                  >
+                    Go to Test Management
+                  </Button>
+                </div>
+              )}
             </Card>
           </TabPane>
         </Tabs>
@@ -522,41 +858,136 @@ function AdminDashboard() {
         </Form>
       </Modal>
 
-      <Drawer
-        title="User Details"
-        placement="right"
-        onClose={() => setViewUserDrawer(false)}
-        open={viewUserDrawer}
-        width={500}
+      <Modal
+        title={editingTest ? 'Edit Test' : 'Create Test'}
+        open={testModalVisible}
+        onCancel={() => {
+          setTestModalVisible(false);
+          testForm.resetFields();
+          setEditingTest(null);
+        }}
+        footer={null}
+        width={600}
+        className="admin-modal"
       >
-        {selectedUser && (
-          <Descriptions column={1} bordered>
-            <Descriptions.Item label="ID">{selectedUser.id}</Descriptions.Item>
-            <Descriptions.Item label="Full Name">{selectedUser.fullname || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Email">{selectedUser.email}</Descriptions.Item>
-            <Descriptions.Item label="Phone">{selectedUser.phone || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Role">
-              <Tag className={`role-tag role-${selectedUser.role ? selectedUser.role.toLowerCase() : 'unknown'}`}>
-                {selectedUser.role || 'Unknown'}
-              </Tag>
-            </Descriptions.Item>
-            <Descriptions.Item label="Created At">
-              {selectedUser.createAt ? new Date(selectedUser.createAt).toLocaleString() : 'N/A'}
-            </Descriptions.Item>
-            <Descriptions.Item label="Status">
-              <Tag color={selectedUser.isDeleted ? 'red' : 'green'}>
-                {selectedUser.isDeleted ? 'Deleted' : 'Active'}
-              </Tag>
-            </Descriptions.Item>
-            <Descriptions.Item label="Total Tests">
-              {selectedUser.tests ? selectedUser.tests.length : 0}
-            </Descriptions.Item>
-            <Descriptions.Item label="Total Test Sessions">
-              {selectedUser.testSessions ? selectedUser.testSessions.length : 0}
-            </Descriptions.Item>
-          </Descriptions>
-        )}
-      </Drawer>
+        <Form
+          form={testForm}
+          layout="vertical"
+          onFinish={handleSubmitTest}
+          className="admin-form"
+        >
+          <Form.Item
+            label="Test Title"
+            name="title"
+            rules={[
+              { required: true, message: 'Please enter test title' },
+              { min: 3, message: 'Title must be at least 3 characters' },
+              { max: 200, message: 'Title must not exceed 200 characters' }
+            ]}
+          >
+            <Input placeholder="Enter test title" />
+          </Form.Item>
+
+          <Form.Item
+            label="Description"
+            name="description"
+            rules={[
+              { required: true, message: 'Please enter test description' },
+              { min: 10, message: 'Description must be at least 10 characters' },
+              { max: 500, message: 'Description must not exceed 500 characters' }
+            ]}
+          >
+            <TextArea 
+              placeholder="Enter test description" 
+              rows={4}
+              showCount
+              maxLength={500}
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                {editingTest ? 'Update' : 'Create'}
+              </Button>
+              <Button onClick={() => {
+                setTestModalVisible(false);
+                testForm.resetFields();
+                setEditingTest(null);
+              }}>
+                Cancel
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title={editingQuestion ? 'Edit Question' : 'Create Question'}
+        open={questionModalVisible}
+        onCancel={() => {
+          setQuestionModalVisible(false);
+          questionForm.resetFields();
+          setEditingQuestion(null);
+        }}
+        footer={null}
+        width={600}
+        className="admin-modal"
+      >
+        <Form
+          form={questionForm}
+          layout="vertical"
+          onFinish={handleSubmitQuestion}
+          className="admin-form"
+        >
+          <Form.Item
+            label="Question Content"
+            name="content"
+            rules={[
+              { required: true, message: 'Please enter question content' },
+              { min: 5, message: 'Content must be at least 5 characters' },
+              { max: 500, message: 'Content must not exceed 500 characters' }
+            ]}
+            help="Write a personality-related statement (e.g., 'I enjoy meeting new people')"
+          >
+            <TextArea 
+              placeholder="Enter question content" 
+              rows={3}
+              showCount
+              maxLength={500}
+            />
+          </Form.Item>
+
+          {selectedTest && (
+            <Form.Item
+              label="Test"
+              name="testId"
+              initialValue={selectedTest.id}
+            >
+              <Input 
+                value={`${selectedTest.title} (ID: ${selectedTest.id})`}
+                disabled
+                style={{ background: '#f5f5f5' }}
+              />
+            </Form.Item>
+          )}
+
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                {editingQuestion ? 'Update' : 'Create'}
+              </Button>
+              <Button onClick={() => {
+                setQuestionModalVisible(false);
+                questionForm.resetFields();
+                setEditingQuestion(null);
+              }}>
+                Cancel
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
