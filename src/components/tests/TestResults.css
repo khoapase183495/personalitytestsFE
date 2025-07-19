@@ -1,0 +1,100 @@
+/* Test Results Styles */
+.test-results-container {
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.test-results-container .ant-result {
+  padding: 4rem 2rem;
+}
+
+.test-results-container .ant-result-title {
+  color: #333 !important;
+  font-weight: 700 !important;
+}
+
+.test-results-container .ant-result-subtitle {
+  color: #6c757d !important;
+  font-size: 1.1rem;
+}
+
+.test-results-container .ant-btn {
+  border-radius: 10px;
+  font-weight: 600;
+  height: 44px;
+  padding: 0 2rem;
+  font-size: 1rem;
+}
+
+.test-results-container .ant-btn-primary {
+  background: linear-gradient(135deg, #3d348b 0%, #7209b7 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(61, 52, 139, 0.3);
+}
+
+.test-results-container .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #2d2668 0%, #5a1a8b 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(61, 52, 139, 0.4);
+}
+
+.test-results-container .ant-btn-default {
+  border: 2px solid #d9d9d9;
+  color: #6c757d;
+}
+
+.test-results-container .ant-btn-default:hover {
+  border-color: #3d348b;
+  color: #3d348b;
+  background: rgba(61, 52, 139, 0.04);
+}
+
+.results-content {
+  max-width: 600px;
+  margin: 2rem auto 0;
+}
+
+.results-card {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  border: none !important;
+}
+
+.results-card .ant-card-body {
+  padding: 2rem !important;
+}
+
+.results-card .ant-typography h4 {
+  color: #333 !important;
+  margin-bottom: 1rem !important;
+}
+
+.results-card .ant-typography p {
+  color: #6c757d !important;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .test-results-container {
+    padding: 1rem;
+  }
+  
+  .test-results-container .ant-result {
+    padding: 2rem 1rem;
+  }
+  
+  .test-results-container .ant-result-extra {
+    margin-top: 2rem;
+  }
+  
+  .test-results-container .ant-result-extra .ant-btn {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .results-card .ant-card-body {
+    padding: 1.5rem !important;
+  }
+}

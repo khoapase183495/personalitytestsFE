@@ -1,31 +1,85 @@
-import React from 'react';
-import './NavBar.css';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import NavBarDropdown from "./NavBarDropdown";
+import "./NavBar.css";
+import { UserOutlined } from "@ant-design/icons";
 
 function NavBar() {
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <a href="/" className="navbar-logo">PersonalityVN</a>
+        <Link to="/" className="navbar-logo">
+          PersonalityVN
+        </Link>
+        
         <div className="nav-menu">
           <div className="nav-item">
-            <a href="/tests" className="nav-link">Personality Tests</a>
-            <div className="dropdown-menu">
-              <a href="/tests/mbti" className="dropdown-item">MBTI</a>
-              <a href="/tests/enneagram" className="dropdown-item">Enneagram</a>
-              <a href="/tests/big-five" className="dropdown-item">Big Five</a>
-              <a href="/tests/career" className="dropdown-item">Career Guidance</a>
-            </div>
+            <Link to="/tests" className="nav-link">
+              Personality Tests
+            </Link>
+            <NavBarDropdown />
           </div>
           <div className="nav-item">
-            <a href="/articles" className="nav-link">Articles</a>
+            <Link to="/articles" className="nav-link">
+              Articles
+            </Link>
           </div>
           <div className="nav-item">
-            <a href="/about" className="nav-link">About Us</a>
+            <Link to="/about" className="nav-link">
+              About Us
+            </Link>
           </div>
         </div>
         <div className="nav-auth">
-          <button className="login-button">Log In</button>
-          <button className="signup-button">Sign Up</button>
+          {isAuthenticated ? (
+            <div className="user-menu">
+              <span className="user-name">
+                Hello, {user?.username || user?.email}
+              </span>
+              {isAuthenticated && (
+          <button
+            className="profile-button"
+            onClick={handleProfileClick}
+            title="View Profile"
+            style={{
+              marginLeft: 12,
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 22,
+              color: "#3d348b",
+              verticalAlign: "middle"
+            }}
+          >
+            <UserOutlined />
+          </button>
+        )}
+              <button onClick={handleLogout} className="logout-button">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link to="/login" className="signup-buttons">
+                Log In
+              </Link>
+              <Link to="/register" className="login-buttons">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
