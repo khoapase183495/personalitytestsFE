@@ -36,13 +36,17 @@ function Login() {
     }
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
     try {
-      await login({
+      const loginResponse = await login({
         email: state.formData.email,
         password: state.formData.password,
       });
 
-      // Redirect to home page after successful login
-      navigate("/");
+      // Redirect based on user role
+      if (loginResponse.role === 'ADMIN') {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       setState((prev) => ({
         ...prev,

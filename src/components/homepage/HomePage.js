@@ -9,7 +9,6 @@ function HomePage() {
     <>
       <Hero />
       <TestSectionAntd />
-      <ArticleSection />
       <Testimonials />
     </>
   );
