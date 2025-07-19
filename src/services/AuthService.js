@@ -88,60 +88,60 @@ class AuthService {  // Login user
   }
   // Register user
   static async register(registerData) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/user/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registerData)
-      });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/user/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(registerData)
+    });
 
-      if (!response.ok) {
-        let errorMessage = 'Registration failed. Please try again.';
-        
-        try {
-          const errorData = await response.json();
-          
-          // Xử lý các loại lỗi khác nhau
-          if (response.status === 400) {
-            if (errorData.message && errorData.message.includes('email')) {
-              errorMessage = 'Email already exists. Please use a different email.';
-            } else if (errorData.message && errorData.message.includes('phone')) {
-              errorMessage = 'Phone number already exists. Please use a different phone number.';
-            } else {
-              errorMessage = errorData.message || 'Invalid input. Please check your information.';
-            }
-          } else if (response.status === 500) {
-            errorMessage = 'Server error. Please try again later.';
+    if (!response.ok) {
+      let errorMessage = 'Registration failed. Please try again.';
+      try {
+        const errorData = await response.json();
+        // Handle different error cases
+        if (response.status === 400) {
+          if (errorData.message && errorData.message.includes('email')) {
+            errorMessage = 'Email already exists. Please use a different email.';
+          } else if (errorData.message && errorData.message.includes('phone')) {
+            errorMessage = 'Phone number already exists. Please use a different phone number.';
           } else {
-            errorMessage = errorData.message || 'Registration failed. Please try again.';
+            errorMessage = errorData.message || 'Invalid input. Please check your information.';
           }
-        } catch (parseError) {
-          // Nếu không parse được JSON, sử dụng message dựa trên status code
-          if (response.status === 400) {
-            errorMessage = 'Invalid input. Please check your information.';
-          } else if (response.status === 500) {
-            errorMessage = 'Server error. Please try again later.';
-          }
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else {
+          errorMessage = errorData.message || 'Registration failed. Please try again.';
         }
+      } catch (parseError) {
         
-        throw new Error(errorMessage);
+        errorMessage = await response.text();
+        if (response.status === 400) {
+          errorMessage = 'Invalid input. Please check your information.';
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
       }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Register error:', error);
-      
-      // Nếu là network error hoặc lỗi không xác định
-      if (error.name === 'TypeError' || error.message.includes('fetch')) {
-        throw new Error('Network error. Please check your internet connection.');
-      }
-      
-      throw error;
+      throw new Error(errorMessage);
     }
+
+    
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text; 
+    }
+  } catch (error) {
+    console.error('Register error:', error);
+    if (error.name === 'TypeError' || error.message.includes('fetch')) {
+      throw new Error('Network error. Please check your internet connection.');
+    }
+    throw error;
   }
+}
 
   // Logout user
   static logout() {

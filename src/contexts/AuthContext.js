@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        AuthService.logout();
+        //AuthService.logout();
 
         const currentUser = AuthService.getCurrentUser();
         const token = AuthService.getToken();

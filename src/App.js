@@ -13,6 +13,8 @@ import TestResults from './components/tests/TestResults';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserDetails from './components/admin/UserDetails/page';
 import ProtectedRoute from './components/ProtectedRoute';
+import UserProfile from './components/UserProfile';
+import 'antd/dist/reset.css';
 
 function App() {
   return (
@@ -67,6 +69,7 @@ function App() {
             <Route path="/tests" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Tests - Coming Soon!</div>} />
             <Route path="/articles" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Articles - Coming Soon!</div>} />
             <Route path="/about" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang About - Coming Soon!</div>} />
+            <Route path="/profile" element={<UserProfile />} />
           </Routes>
           <Footer />
         </div>
