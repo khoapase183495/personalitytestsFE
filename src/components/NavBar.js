@@ -26,15 +26,17 @@ function NavBar() {
         
         <div className="nav-menu">
           <div className="nav-item">
-            <Link to="/tests" className="nav-link">
-              Personality Tests
-            </Link>
-            <NavBarDropdown />
+           <span className="nav-link" style={{ cursor: "pointer" }}>
+            Personality Tests
+           </span>
+          <NavBarDropdown />
           </div>
           <div className="nav-item">
-            <Link to="/articles" className="nav-link">
-              Articles
-            </Link>
+            {user?.role === "PARENT" && (
+              <Link to="/student" className="nav-link">
+                Student
+              </Link>
+            )}
           </div>
           <div className="nav-item">
             <Link to="/about" className="nav-link">

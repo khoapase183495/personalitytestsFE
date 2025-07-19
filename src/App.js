@@ -11,6 +11,8 @@ import TestDetail from './components/tests/TestDetail';
 import Question from './components/tests/Question';
 import TestResults from './components/tests/TestResults';
 import UserProfile from './components/UserProfile';
+import StudentPage from "./components/StudentPage";
+import AboutUs from './components/AboutUs';
 import 'antd/dist/reset.css';
 
 function App() {
@@ -27,9 +29,9 @@ function App() {
             <Route path="/tests/:testSlug/details" element={<TestDetail />} />
             <Route path="/tests/:testSlug/results" element={<TestResults />} />
             <Route path="/tests" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Tests - Coming Soon!</div>} />
-            <Route path="/articles" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Articles - Coming Soon!</div>} />
-            <Route path="/about" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang About - Coming Soon!</div>} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/student" element={<StudentPage />} />
           </Routes>
           <Footer />
         </div>

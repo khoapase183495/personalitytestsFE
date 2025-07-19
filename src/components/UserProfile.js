@@ -1,211 +1,374 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { Card, Typography, Modal, message } from "antd";
+import { 
+  Card, 
+  Typography, 
+  Modal, 
+  message, 
+  Button, 
+  Form, 
+  Input, 
+  Space,
+  Divider,
+  Avatar,
+  Tag,
+  Row,
+  Col
+} from "antd";
+import { 
+  UserOutlined, 
+  EditOutlined, 
+  KeyOutlined, 
+  MailOutlined, 
+  PhoneOutlined,
+  CrownOutlined
+} from "@ant-design/icons";
 import ProfileService from "../services/ProfileService";
 import "./UserProfile.css";
-message.success("Test notification!");
-const { Title, Paragraph } = Typography;
+
+const { Title, Paragraph, Text } = Typography;
 
 function UserProfile() {
   const { user } = useAuth();
   const [editVisible, setEditVisible] = useState(false);
   const [resetVisible, setResetVisible] = useState(false);
-
-  // Edit Profile State
-  const [editForm, setEditForm] = useState({
-    email: user?.email || "",
-    username: user?.username || "",
-    phone: user?.phone || "",
-  });
   const [editLoading, setEditLoading] = useState(false);
-  const [editError, setEditError] = useState(null);
-
-  // Reset Password State
-  const [newPassword, setNewPassword] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
-  const [resetError, setResetError] = useState(null);
+
+  const [editForm] = Form.useForm();
+  const [resetForm] = Form.useForm();
 
   if (!user) {
     return (
-      <div style={{ padding: 32, textAlign: "center" }}>
-        <Title level={3}>User not found</Title>
-        <Paragraph>Please log in to view your profile.</Paragraph>
+      <div className="user-profile-container">
+        <Card className="user-profile-card">
+          <div style={{ textAlign: "center", padding: "2rem" }}>
+            <UserOutlined style={{ fontSize: "4rem", color: "#d9d9d9" }} />
+            <Title level={3} style={{ marginTop: "1rem" }}>User not found</Title>
+            <Paragraph>Please log in to view your profile.</Paragraph>
+          </div>
+        </Card>
       </div>
     );
   }
 
-  // Edit Profile Handlers
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm((prev) => ({ ...prev, [name]: value }));
-    setEditError(null);
+  const handleEditSubmit = async (values) => {
+    setEditLoading(true);
+    try {
+      await ProfileService.updateAccount(user.id, values);
+      message.success("Profile updated successfully!");
+      setEditVisible(false);
+
+      // Update localStorage with new user info
+      const updatedUser = {
+        ...user,
+        email: values.email,
+        username: values.username,
+        phone: values.phone,
+      };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (error) {
+      message.error(error.message || "Failed to update profile.");
+    } finally {
+      setEditLoading(false);
+    }
   };
 
-  const handleEditSubmit = async (e) => {
-  e.preventDefault();
-  setEditLoading(true);
-  setEditError(null);
-  try {
-    await ProfileService.updateAccount(user.id, editForm);
-    message.success("Profile updated successfully!");
-    setEditVisible(false);
-
-    // Update localStorage with new user info
-    const updatedUser = {
-      ...user,
-      email: editForm.email,
-      username: editForm.username,
-      phone: editForm.phone,
-    };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
-  } catch (error) {
-    setEditError(error.message || "Failed to update profile.");
-  } finally {
-    setEditLoading(false);
-  }
-};
-
-const handleResetSubmit = async (e) => {
-  e.preventDefault();
-  setResetLoading(true);
-  setResetError(null);
-  if (!newPassword || newPassword.length < 6) {
-    setResetError("Password must be at least 6 characters.");
-    setResetLoading(false);
-    return;
-  }
-  try {
-    const result = await ProfileService.resetPassword(newPassword);
-    // Show backend message if present, otherwise default
-    if (typeof result === "string" && result === "Reset successfully") {
+  const handleResetSubmit = async (values) => {
+    setResetLoading(true);
+    try {
+      await ProfileService.resetPassword(values.newPassword);
       message.success("Password reset successfully!");
-    } else {
-      message.success("Password reset successfully!");
+      setResetVisible(false);
+      resetForm.resetFields();
+    } catch (error) {
+      message.error(error.message || "Failed to reset password.");
+    } finally {
+      setResetLoading(false);
     }
-    setResetVisible(false);
-    setNewPassword("");
-  } catch (error) {
-    setResetError(error.message || "Failed to reset password.");
-  } finally {
-    setResetLoading(false);
-  }
-};
+  };
+
+  const openEditModal = () => {
+    editForm.setFieldsValue({
+      email: user.email,
+      username: user.username,
+      phone: user.phone || "",
+    });
+    setEditVisible(true);
+  };
+
+  const getRoleColor = (role) => {
+    switch (role?.toUpperCase()) {
+      case 'ADMIN': return 'red';
+      case 'PARENT': return 'blue';
+      case 'STUDENT': return 'green';
+      default: return 'default';
+    }
+  };
+
+  const getRoleIcon = (role) => {
+    switch (role?.toUpperCase()) {
+      case 'ADMIN': return <CrownOutlined />;
+      case 'PARENT': return <UserOutlined />;
+      case 'STUDENT': return <UserOutlined />;
+      default: return <UserOutlined />;
+    }
+  };
 
   return (
     <div className="user-profile-container">
-      <Card className="user-profile-card">
-        <Title level={2}>User Profile</Title>
-        <Paragraph>
-          <strong>Username:</strong> {user.username || user.email}
-        </Paragraph>
-        <Paragraph>
-          <strong>Email:</strong> {user.email}
-        </Paragraph>
-        <Paragraph>
-          <strong>Phone:</strong> {user.phone || "N/A"}
-        </Paragraph>
-        <Paragraph>
-          <strong>Role:</strong> {user.role?.name || user.role || "N/A"}
-        </Paragraph>
-        <div className="profile-actions">
-          <button className="profile-action-btn" onClick={() => setEditVisible(true)}>
-            Edit Profile
-          </button>
-          <button className="profile-action-btn" onClick={() => setResetVisible(true)}>
-            Reset Password
-          </button>
-        </div>
-      </Card>
+      <div className="profile-wrapper">
+        <Card className="user-profile-card">
+          <div className="profile-header">
+            <Avatar 
+              size={80} 
+              icon={<UserOutlined />} 
+              className="profile-avatar"
+            />
+            <div className="profile-header-info">
+              <Title level={2} className="profile-name">
+                {user.username || user.email}
+              </Title>
+              <Tag 
+                icon={getRoleIcon(user.role)}
+                color={getRoleColor(user.role)}
+                className="profile-role-tag"
+              >
+                {user.role?.name || user.role || "User"}
+              </Tag>
+            </div>
+          </div>
+
+          <Divider className="profile-divider" />
+
+          <div className="profile-details">
+            <Row gutter={[24, 16]}>
+              <Col xs={24} sm={12}>
+                <div className="profile-detail-item">
+                  <MailOutlined className="profile-detail-icon" />
+                  <div>
+                    <Text className="profile-detail-label">Email</Text>
+                    <Paragraph className="profile-detail-value">
+                      {user.email}
+                    </Paragraph>
+                  </div>
+                </div>
+              </Col>
+              <Col xs={24} sm={12}>
+                <div className="profile-detail-item">
+                  <UserOutlined className="profile-detail-icon" />
+                  <div>
+                    <Text className="profile-detail-label">Username</Text>
+                    <Paragraph className="profile-detail-value">
+                      {user.username || user.email}
+                    </Paragraph>
+                  </div>
+                </div>
+              </Col>
+              <Col xs={24} sm={12}>
+                <div className="profile-detail-item">
+                  <PhoneOutlined className="profile-detail-icon" />
+                  <div>
+                    <Text className="profile-detail-label">Phone</Text>
+                    <Paragraph className="profile-detail-value">
+                      {user.phone || "Not provided"}
+                    </Paragraph>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </div>
+
+          <Divider className="profile-divider" />
+
+          <div className="profile-actions">
+            <Space size="large" wrap>
+              <Button 
+                type="primary" 
+                icon={<EditOutlined />}
+                size="large"
+                onClick={openEditModal}
+                className="profile-action-btn primary"
+              >
+                Edit Profile
+              </Button>
+              <Button 
+                icon={<KeyOutlined />}
+                size="large"
+                onClick={() => setResetVisible(true)}
+                className="profile-action-btn secondary"
+              >
+                Change Password
+              </Button>
+            </Space>
+          </div>
+        </Card>
+      </div>
 
       {/* Edit Profile Modal */}
       <Modal
+        title={
+          <div className="modal-title">
+            <EditOutlined /> Edit Profile
+          </div>
+        }
         open={editVisible}
         onCancel={() => setEditVisible(false)}
         footer={null}
         centered
         destroyOnClose
-        title={<span className="profile-modal-title">Edit Profile</span>}
         className="profile-modal"
+        width={500}
       >
-        <form className="profile-form" onSubmit={handleEditSubmit}>
-          {editError && <div className="profile-error">{editError}</div>}
-          <div className="profile-form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={editForm.email}
-              onChange={handleEditChange}
-              required
-            />
-          </div>
-          <div className="profile-form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              name="username"
-              value={editForm.username}
-              onChange={handleEditChange}
-              required
-            />
-          </div>
-          <div className="profile-form-group">
-            <label>Phone</label>
-            <input
-              type="tel"
-              name="phone"
-              value={editForm.phone}
-              onChange={handleEditChange}
-              placeholder="Enter phone number"
-            />
-          </div>
-          <button
-            type="submit"
-            className="profile-modal-btn"
-            disabled={editLoading}
+        <Form
+          form={editForm}
+          layout="vertical"
+          onFinish={handleEditSubmit}
+          className="profile-form"
+        >
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              { required: true, message: "Please enter your email" },
+              { type: "email", message: "Please enter a valid email" }
+            ]}
           >
-            {editLoading ? "Saving..." : "Save Changes"}
-          </button>
-        </form>
+            <Input 
+              prefix={<MailOutlined />} 
+              placeholder="Enter your email"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="username"
+            label="Username"
+            rules={[{ required: true, message: "Please enter your username" }]}
+          >
+            <Input 
+              prefix={<UserOutlined />} 
+              placeholder="Enter your username"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="phone"
+            label="Phone Number"
+          >
+            <Input 
+              prefix={<PhoneOutlined />} 
+              placeholder="Enter your phone number"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item className="form-actions">
+            <Space>
+              <Button 
+                onClick={() => setEditVisible(false)}
+                size="large"
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="primary" 
+                htmlType="submit"
+                loading={editLoading}
+                size="large"
+                className="submit-btn"
+              >
+                Save Changes
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
 
       {/* Reset Password Modal */}
       <Modal
+        title={
+          <div className="modal-title">
+            <KeyOutlined /> Change Password
+          </div>
+        }
         open={resetVisible}
         onCancel={() => setResetVisible(false)}
         footer={null}
         centered
         destroyOnClose
-        title={<span className="profile-modal-title">Reset Password</span>}
         className="profile-modal"
+        width={450}
       >
-        <form className="profile-form" onSubmit={handleResetSubmit}>
-          {resetError && <div className="profile-error">{resetError}</div>}
-          <div className="profile-form-group">
-            <label>New Password</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={e => {
-                setNewPassword(e.target.value);
-                setResetError(null);
-              }}
-              placeholder="Enter new password"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="profile-modal-btn"
-            disabled={resetLoading}
+        <Form
+          form={resetForm}
+          layout="vertical"
+          onFinish={handleResetSubmit}
+          className="profile-form"
+        >
+          <Form.Item
+            name="newPassword"
+            label="New Password"
+            rules={[
+              { required: true, message: "Please enter your new password" },
+              { min: 6, message: "Password must be at least 6 characters" }
+            ]}
           >
-            {resetLoading ? "Resetting..." : "Reset Password"}
-          </button>
-        </form>
+            <Input.Password 
+              prefix={<KeyOutlined />}
+              placeholder="Enter new password"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmPassword"
+            label="Confirm Password"
+            dependencies={['newPassword']}
+            rules={[
+              { required: true, message: "Please confirm your password" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Passwords do not match'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password 
+              prefix={<KeyOutlined />}
+              placeholder="Confirm new password"
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item className="form-actions">
+            <Space>
+              <Button 
+                onClick={() => setResetVisible(false)}
+                size="large"
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="primary" 
+                htmlType="submit"
+                loading={resetLoading}
+                size="large"
+                className="submit-btn"
+              >
+                Change Password
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

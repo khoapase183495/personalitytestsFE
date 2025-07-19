@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Typography, Spin, Alert, Button } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import { Typography, Spin, Alert, Button, Card, Divider } from 'antd';
+import { LoadingOutlined, TrophyOutlined, HomeOutlined } from '@ant-design/icons';
 import TestSessionService from '../../services/TestSessionService';
+import './TestResults.css';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -42,40 +43,80 @@ function TestResults() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', marginTop: 48 }}>
-        <Spin indicator={<LoadingOutlined style={{ fontSize: 48, color: '#3d348b' }} spin />} />
-        <Paragraph style={{ marginTop: 16, color: '#6c757d', fontSize: '1.1rem' }}>
-          Loading test result...
-        </Paragraph>
+      <div className="test-results-container">
+        <div className="loading-wrapper">
+          <Spin indicator={<LoadingOutlined className="loading-icon" spin />} />
+          <Paragraph className="loading-text">
+            Analyzing your personality test results...
+          </Paragraph>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <Alert
-        message="Error"
-        description={error}
-        type="error"
-        showIcon
-        action={
-          <Button type="primary" onClick={() => navigate('/')}>
-            Back to Home
-          </Button>
-        }
-      />
+      <div className="test-results-container">
+        <Card className="error-card">
+          <Alert
+            message="Unable to Load Results"
+            description={error}
+            type="error"
+            showIcon
+            action={
+              <Button type="primary" onClick={() => navigate('/')}>
+                Return to Home
+              </Button>
+            }
+          />
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', padding: 24, background: '#fff', borderRadius: 8 }}>
-      <Title level={2} style={{ color: '#3d348b' }}>Your Test Result</Title>
-      <Paragraph style={{ whiteSpace: 'pre-line', fontSize: '1.1rem' }}>
-        {result}
-      </Paragraph>
-      <Button type="primary" onClick={() => navigate('/')}>
-        Back to Home
-      </Button>
+    <div className="test-results-container">
+      <div className="results-wrapper">
+        <Card className="results-header-card">
+          <div className="results-header">
+            <TrophyOutlined className="trophy-icon" />
+            <Title level={1} className="results-title">
+              Personality Assessment Results
+            </Title>
+            <Text className="results-subtitle">
+              Your comprehensive personality analysis is ready
+            </Text>
+          </div>
+        </Card>
+
+        <Card className="results-content-card">
+          <div className="results-content">
+            <Title level={3} className="content-title">
+              Your Personality Profile
+            </Title>
+            <Divider className="content-divider" />
+            <div className="result-text-container">
+              <Paragraph className="result-text">
+                {result}
+              </Paragraph>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="results-actions-card">
+          <div className="results-actions">
+            <Button 
+              type="primary" 
+              size="large"
+              icon={<HomeOutlined />}
+              onClick={() => navigate('/')}
+              className="action-button primary-button"
+            >
+              Back to Home
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
