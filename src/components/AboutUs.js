@@ -54,7 +54,7 @@ function AboutUs() {
       <Card className="hero-card">
         <div className="hero-content">
           <Title level={1} className="hero-title">
-            About PersonalityVN
+            About Us
           </Title>
           <Paragraph className="hero-subtitle">
             Empowering Vietnamese students to discover their ideal career paths through 
