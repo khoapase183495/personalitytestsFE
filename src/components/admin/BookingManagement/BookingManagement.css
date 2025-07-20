@@ -1,0 +1,236 @@
+.booking-management {
+  padding: 12px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.booking-management .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.booking-management .ant-statistic-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.booking-management .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.booking-management .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 600;
+}
+
+.booking-management .ant-table-tbody > tr:hover > td {
+  background-color: #e6f7ff !important;
+}
+
+.booking-management .ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.booking-details {
+  padding: 16px 0;
+}
+
+.booking-details .ant-row {
+  margin-bottom: 16px;
+}
+
+.booking-details .ant-col {
+  display: flex;
+  align-items: center;
+}
+
+.booking-details strong {
+  color: #262626;
+  margin-right: 8px;
+}
+
+.booking-management .ant-modal-header {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.booking-management .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.booking-management .ant-input-search {
+  border-radius: 6px;
+}
+
+.booking-management .ant-select {
+  border-radius: 6px;
+}
+
+.booking-management .ant-picker {
+  border-radius: 6px;
+}
+
+.booking-management .ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.booking-management .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.booking-management .ant-btn-danger {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.booking-management .ant-btn-primary.ant-btn-background-ghost {
+  color: #1890ff;
+  background-color: transparent;
+  border-color: #1890ff;
+}
+
+.booking-management .ant-btn-primary.ant-btn-background-ghost:hover {
+  color: #40a9ff;
+  background-color: #f0f9ff;
+  border-color: #40a9ff;
+}
+
+.booking-management .ant-pagination {
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* Calendar specific styles */
+.calendar-cell {
+  overflow: hidden;
+  height: 100%;
+  padding: 2px;
+}
+
+.calendar-booking {
+  margin-bottom: 2px;
+  padding: 1px;
+  background-color: #f0f9ff;
+  border-radius: 2px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.booking-info {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #666;
+  font-size: 9px;
+}
+
+.booking-management .ant-picker-calendar-date-value {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.booking-management .ant-picker-calendar .ant-picker-calendar-date {
+  height: 80px;
+  overflow: hidden;
+}
+
+.booking-management .ant-picker-calendar-date-content {
+  height: 60px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+/* Calendar date with bookings */
+.booking-management .ant-picker-calendar-date:has(.calendar-booking) {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+}
+
+/* Today highlight */
+.booking-management .ant-picker-calendar-date-today .ant-picker-calendar-date-value {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+/* Status colors */
+.booking-status-upcoming {
+  background-color: #e6f7ff;
+  border-left: 3px solid #1890ff;
+}
+
+.booking-status-past {
+  background-color: #f6f6f6;
+  border-left: 3px solid #d9d9d9;
+}
+
+.booking-status-today {
+  background-color: #fff7e6;
+  border-left: 3px solid #faad14;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .booking-management {
+    padding: 10px;
+  }
+  
+  .booking-management .ant-col {
+    margin-bottom: 16px;
+  }
+  
+  .booking-management .ant-table {
+    overflow-x: auto;
+  }
+
+  .calendar-cell {
+    font-size: 8px;
+  }
+  
+  .calendar-booking {
+    margin-bottom: 1px;
+    padding: 0.5px;
+  }
+}
+
+/* Custom scrollbar for table */
+.booking-management .ant-table-body::-webkit-scrollbar {
+  height: 8px;
+}
+
+.booking-management .ant-table-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.booking-management .ant-table-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.booking-management .ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Calendar scrollbar */
+.booking-management .ant-picker-calendar-date-content::-webkit-scrollbar {
+  width: 3px;
+}
+
+.booking-management .ant-picker-calendar-date-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.booking-management .ant-picker-calendar-date-content::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 2px;
+}
+
+.booking-management .ant-picker-calendar-date-content::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
