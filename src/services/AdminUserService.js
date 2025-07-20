@@ -14,6 +14,8 @@ class AdminUserService {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
+      console.log('AdminUserService: Fetching all users...');
+      
       const response = await fetch(`${API_BASE_URL}/api/user`, {
         method: 'GET',
         headers: headers
@@ -39,6 +41,7 @@ class AdminUserService {
       }
 
       const data = await response.json();
+      console.log('AdminUserService: Fetched users successfully:', data.length, 'users');
       return data;
       
     } catch (error) {
@@ -113,6 +116,8 @@ class AdminUserService {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
+      console.log('AdminUserService: Creating user with data:', userData);
+      
       const response = await fetch(`${API_BASE_URL}/api/user/register`, {
         method: 'POST',
         headers: headers,
@@ -138,8 +143,10 @@ class AdminUserService {
         throw new Error(errorMessage);
       }
 
-      const data = await response.json();
-      return data;
+      // Backend returns text "Register successfully!" not JSON
+      const responseText = await response.text();
+      console.log('AdminUserService: User created successfully:', responseText);
+      return { message: responseText, success: true };
       
     } catch (error) {
       console.error('AdminUserService: Error creating user:', error);
@@ -200,13 +207,9 @@ class AdminUserService {
     }
   }
 
-  // Delete user (admin only) - Temporarily disabled as backend endpoint not available
+  // Delete user (admin only)
   static async deleteUser(userId) {
     try {
-      // TODO: Backend endpoint DELETE /api/user/{id} not implemented yet
-      throw new Error('Delete function is temporarily unavailable. Please contact backend team to implement DELETE /api/user/{id} endpoint.');
-      
-      /* Original code when backend endpoint is ready:
       const token = localStorage.getItem('token');
       const headers = {
         'Content-Type': 'application/json',
@@ -216,7 +219,7 @@ class AdminUserService {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${API_BASE_URL}/api/user/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/user/deleteUser/${userId}`, {
         method: 'DELETE',
         headers: headers
       });
@@ -228,19 +231,22 @@ class AdminUserService {
           const errorData = await response.json();
           if (response.status === 404) {
             errorMessage = 'User not found';
+          } else if (response.status === 403) {
+            errorMessage = 'Access forbidden - Admin privileges required';
+          } else if (response.status === 401) {
+            errorMessage = 'Unauthorized - Please login again';
           } else {
             errorMessage = errorData.message || errorMessage;
           }
         } catch (parseError) {
-          console.log('AdminUserService: Could not parse error response');
+          errorMessage = `HTTP ${response.status}: Unknown error`;
         }
         
         throw new Error(errorMessage);
       }
 
-      console.log('AdminUserService: Successfully deleted user');
-      return true;
-      */
+      const data = await response.json();
+      return data;
       
     } catch (error) {
       console.error('AdminUserService: Error deleting user:', error);
