@@ -1,0 +1,171 @@
+.feedback-management {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.feedback-management .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-management .ant-statistic-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.feedback-management .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.feedback-management .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 600;
+}
+
+.feedback-management .ant-table-tbody > tr:hover > td {
+  background-color: #e6f7ff !important;
+}
+
+.feedback-management .ant-rate {
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.feedback-management .ant-rate-star {
+  margin-right: 2px;
+  display: inline-block;
+}
+
+.feedback-management .ant-progress-line {
+  margin: 8px 0;
+}
+
+.feedback-management .ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.feedback-details {
+  padding: 16px 0;
+}
+
+.feedback-details .ant-row {
+  margin-bottom: 16px;
+}
+
+.feedback-details .ant-col {
+  display: flex;
+  align-items: center;
+}
+
+.feedback-details strong {
+  color: #262626;
+  margin-right: 8px;
+}
+
+.feedback-management .ant-modal-header {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 24px;
+}
+
+.feedback-management .ant-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.feedback-management .ant-input-search {
+  border-radius: 6px;
+}
+
+.feedback-management .ant-select {
+  border-radius: 6px;
+}
+
+.feedback-management .ant-picker {
+  border-radius: 6px;
+}
+
+.feedback-management .ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.feedback-management .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.feedback-management .ant-btn-danger {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.feedback-management .ant-btn-primary.ant-btn-background-ghost {
+  color: #1890ff;
+  background-color: transparent;
+  border-color: #1890ff;
+}
+
+.feedback-management .ant-btn-primary.ant-btn-background-ghost:hover {
+  color: #40a9ff;
+  background-color: #f0f9ff;
+  border-color: #40a9ff;
+}
+
+.feedback-management .ant-pagination {
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* Rating distribution specific styles */
+.feedback-management .rating-distribution {
+  text-align: center;
+}
+
+.feedback-management .rating-distribution .ant-progress {
+  margin: 8px 0;
+}
+
+.feedback-management .rating-count {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .feedback-management {
+    padding: 10px;
+  }
+  
+  .feedback-management .ant-col {
+    margin-bottom: 16px;
+  }
+  
+  .feedback-management .ant-table {
+    overflow-x: auto;
+  }
+}
+
+/* Custom scrollbar for table */
+.feedback-management .ant-table-body::-webkit-scrollbar {
+  height: 8px;
+}
+
+.feedback-management .ant-table-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.feedback-management .ant-table-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.feedback-management .ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
