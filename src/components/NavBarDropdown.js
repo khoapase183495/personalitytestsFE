@@ -50,7 +50,7 @@ function NavBarDropdown() {
       {tests.map(test => (
         <Link 
           key={test.id} 
-          to={`/tests/${test.slug}`} 
+          to={`/tests/${test.slug}/details`} 
           className="dropdown-item"
         >
           {test.title}

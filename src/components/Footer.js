@@ -4,7 +4,7 @@ import './Footer.css';
 function Footer() {
   return (
     <footer className="footer">
-      <div className="footer-container">
+      <div className="footer-container footer-grid">
         <div className="footer-section">
           <h3>PersonalityVN</h3>
           <p>Vietnam's leading personality test platform, helping you understand yourself and develop your potential.</p>
@@ -18,20 +18,11 @@ function Footer() {
         <div className="footer-section">
           <h3>Tests</h3>
           <ul>
-            <li><a href="/tests/mbti">MBTI</a></li>
-            <li><a href="/tests/enneagram">Enneagram</a></li>
-            <li><a href="/tests/big-five">Big Five</a></li>
-            <li><a href="/tests/career">Career Guidance</a></li>
-            <li><a href="/tests/relationship">Relationship Compatibility</a></li>
-          </ul>
-        </div>
-        <div className="footer-section">
-          <h3>Articles</h3>
-          <ul>
-            <li><a href="/articles/personality">Personality</a></li>
-            <li><a href="/articles/career">Career</a></li>
-            <li><a href="/articles/relationships">Relationships</a></li>
-            <li><a href="/articles/self-growth">Personal Development</a></li>
+            <li>MBTI</li>
+            <li>Enneagram</li>
+            <li>Big Five</li>
+            <li>Career Guidance</li>
+            <li>Relationship Compatibility</li>
           </ul>
         </div>
         <div className="footer-section">

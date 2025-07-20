@@ -24,9 +24,6 @@ function Hero() {
           Take a Free Test
         </button>
       </div>
-      <div className="hero-image">
-        <img src="/images/hero-image.png" alt="Personality Tests" />
-      </div>
     </div>
   );
 }

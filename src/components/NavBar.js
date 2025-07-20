@@ -36,11 +36,20 @@ function NavBar() {
           {!isAdmin && (
             <>
               <div className="nav-item">
-                <Link to="/tests" className="nav-link">
+                <span className="nav-link" style={{ cursor: "pointer" }}>
                   Personality Tests
-                </Link>
+                </span>
                 <NavBarDropdown />
               </div>
+
+              {user?.role === "PARENT" && (
+                <div className="nav-item">
+                  <Link to="/student" className="nav-link">
+                    Student
+                  </Link>
+                </div>
+              )}
+
               <div className="nav-item">
                 <Link to="/articles" className="nav-link">
                   Articles
@@ -51,6 +60,21 @@ function NavBar() {
                   About Us
                 </Link>
               </div>
+
+              {(user?.role === "STUDENT" || user?.role === "PARENT") && (
+                <>
+                  <div className="nav-item">
+                    <Link to="/consultation" className="nav-link">
+                      Consultation
+                    </Link>
+                  </div>
+                  <div className="nav-item">
+                    <Link to="/test-history" className="nav-link">
+                      Test History
+                    </Link>
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
@@ -59,9 +83,8 @@ function NavBar() {
           {isAuthenticated ? (
             <div className="user-menu">
               <span className="user-name">
-                Hello, {user?.fullname || user?.username || user?.email}
+                Hello, {user?.fullName || user?.fullname || user?.username || user?.email}
                 {isAdmin && <span className="admin-badge"> (Admin)</span>}
-                
               </span>
               <button
                 className="profile-button"

@@ -95,6 +95,31 @@ class TestSessionService {
       throw error;
     }
   }
+
+  // Get all test results/reviews for a user
+  static async getUserTestHistory(userId) {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/test-sessions/reviews/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData || 'Failed to get test history');
+      }
+
+      const data = await response.json();
+      return data; // Array of test session reviews
+    } catch (error) {
+      console.error('TestSessionService: getUserTestHistory error:', error);
+      throw error;
+    }
+  }
 }
 
 export default TestSessionService;
