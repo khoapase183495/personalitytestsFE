@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Table, Button, Modal, message, Space, Popconfirm, Tag, DatePicker, Select, Input, Row, Col, Statistic, Calendar, Form } from 'antd';
 import { EyeOutlined, DeleteOutlined, CalendarOutlined, UserOutlined, ClockCircleOutlined, FilterOutlined, CheckCircleOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import AdminBookingService from '../../../services/AdminBookingService';
-import ConsultationService from '../../../services/ConsultationService';
+import AdminConsultationService from '../../../services/AdminConsultationService';
 import './BookingManagement.css';
 
 const { RangePicker } = DatePicker;
@@ -128,7 +128,7 @@ function BookingManagement() {
   const handleTestConsultations = async () => {
     try {
       console.log('Testing: Fetching all consultations...');
-      const consultations = await ConsultationService.getAllConsultations();
+      const consultations = await AdminConsultationService.getAllConsultations();
       console.log('Testing: Retrieved consultations:', consultations);
       message.success(`Found ${consultations.length} consultations in database`);
     } catch (error) {
@@ -158,7 +158,7 @@ function BookingManagement() {
       console.log('Frontend: Sending meeting data:', meetingData);
       console.log('Frontend: Selected booking:', selectedBookingForMeeting);
 
-      const response = await ConsultationService.createMeeting(meetingData);
+      const response = await AdminConsultationService.createMeeting(meetingData);
       
       message.success('Meeting created successfully!');
       console.log('Frontend: Meeting response received:', response);

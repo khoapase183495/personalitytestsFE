@@ -20,7 +20,7 @@ import {
   ReloadOutlined,
   FilterOutlined
 } from '@ant-design/icons';
-import ConsultationService from '../../../services/ConsultationService';
+import AdminConsultationService from '../../../services/AdminConsultationService';
 import './ConsultationManagement.css';
 
 const { Search } = Input;
@@ -51,7 +51,7 @@ function ConsultationManagement() {
     setLoading(true);
     try {
       console.log('Loading consultations...');
-      const response = await ConsultationService.getAllConsultations();
+      const response = await AdminConsultationService.getAllConsultations();
       console.log('Consultations loaded:', response);
       
       if (response && Array.isArray(response)) {
