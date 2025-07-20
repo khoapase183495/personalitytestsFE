@@ -12,7 +12,7 @@ function Register() {
       email: '',
       password: '',
       confirmPassword: '',
-      name: '',
+      fullName: '',
       phone: '',
       role: ''
     }
@@ -30,9 +30,9 @@ function Register() {
     }));
   };
   const validateForm = () => {
-    const { email, password, confirmPassword, name, role } = state.formData;
+    const { email, password, confirmPassword, fullName, role } = state.formData;
     
-    if (!email || !password || !confirmPassword || !name || !role) {
+    if (!email || !password || !confirmPassword || !fullName || !role) {
       return 'Please fill in all required fields';
     }
     
@@ -68,7 +68,7 @@ function Register() {
     try {      await register({
         email: state.formData.email,
         password: state.formData.password,
-        name: state.formData.name,
+        fullName: state.formData.fullName,
         phone: state.formData.phone,
         role: state.formData.role
       });
@@ -101,15 +101,15 @@ function Register() {
           )}
 
           <div className="form-group">
-            <label htmlFor="name">Full Name <span className="required">*</span></label>
+            <label htmlFor="fullName">Full Name <span className="required">*</span></label>
             <input
-              type="text"
-              id="name"
-              name="name"
-              value={state.formData.name}
-              onChange={handleInputChange}
-              placeholder="Enter your full name"
-              required
+            type="text"
+            id="fullName"
+            name="fullName" // <-- use fullName here
+            value={state.formData.fullName}
+            onChange={handleInputChange}
+            placeholder="Enter your full name"
+            required
             />
           </div>
 
@@ -148,7 +148,7 @@ function Register() {
               <option value="">Select your role</option>
               <option value="STUDENT">Student</option>
               <option value="PARENT">Parent</option>
-              <option value="ADMIN">Admin</option>
+              
             </select>
           </div>
 

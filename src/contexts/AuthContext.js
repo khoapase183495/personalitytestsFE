@@ -18,8 +18,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        AuthService.logout();
-
         const currentUser = AuthService.getCurrentUser();
         const token = AuthService.getToken();
 
@@ -45,7 +43,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
-  }, []);  const login = async (loginData) => {
+  }, []);
+
+  const login = async (loginData) => {
     try {
       setLoading(true);
       const response = await AuthService.login(loginData);
@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
   const logout = () => {
     AuthService.logout();
     setUser(null);

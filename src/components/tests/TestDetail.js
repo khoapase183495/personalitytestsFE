@@ -78,23 +78,30 @@ function TestDetail() {
   };
 
   const handleTakeTest = async () => {
-  if (!isAuthenticated) {
-    setShowLoginModal(true);
-  } else {
-    try {
-      setLoading(true);
-      // Tạo test session mới
-      const session = await TestSessionService.createSession(test.id);
-      // Điều hướng sang trang làm bài test, truyền sessionId qua query param
-      navigate(`/tests/${testSlug}?sessionId=${session.sessionId}`);
-    } catch (err) {
-      setError('Failed to create test session. Please try again.');
-    } finally {
-      setLoading(false);
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+    } else {
+      try {
+        setLoading(true);
+        console.log('Creating session for test ID:', test.id); // Debug log
+        const session = await TestSessionService.createSession(test.id);
+        console.log('Session created:', session); // Debug log
+        
+        // Store testId in localStorage for later use in feedback
+        localStorage.setItem(`testId_${session.sessionId}`, session.testId.toString());
+        
+        // Navigate to test results with sessionId (we'll get testId from localStorage)
+        const url = `/tests/${testSlug}?sessionId=${session.sessionId}`;
+        console.log('Navigating to:', url); // Debug log
+        navigate(url);
+      } catch (err) {
+        console.error('Failed to create session:', err);
+        setError('Failed to create test session. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-};
-
+  };
   const handleBackToHome = () => {
     navigate('/');
   };

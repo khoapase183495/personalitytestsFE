@@ -10,9 +10,19 @@ import Register from './components/authentication/Register';
 import TestDetail from './components/tests/TestDetail';
 import Question from './components/tests/Question';
 import TestResults from './components/tests/TestResults';
+
+import UserProfile from './components/UserProfile';
+import StudentPage from "./components/StudentPage";
+import AboutUs from './components/AboutUs';
+import TestHistory from './components/TestHistory';
+import Consultation from './components/Consultation';
+import ConsultationLinks from './components/ConsultationLinks';
+
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserDetails from './components/admin/UserDetails/page';
 import ProtectedRoute from './components/ProtectedRoute';
+
+import 'antd/dist/reset.css';
 
 function App() {
   return (
@@ -24,6 +34,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+
+            {/* Admin Routes */}
             <Route 
               path="/admin" 
               element={
@@ -40,6 +52,8 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+
+            {/* Test Routes */}
             <Route 
               path="/tests/:testSlug" 
               element={
@@ -64,9 +78,19 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route path="/tests" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Tests - Coming Soon!</div>} />
-            <Route path="/articles" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang Articles - Coming Soon!</div>} />
-            <Route path="/about" element={<div style={{padding: '2rem', textAlign: 'center'}}>Trang About - Coming Soon!</div>} />
+            <Route path="/tests" element={
+              <div style={{ padding: '2rem', textAlign: 'center' }}>
+                Trang Tests - Coming Soon!
+              </div>
+            } />
+
+            {/* General Routes */}
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/student" element={<StudentPage />} />
+            <Route path="/consultation" element={<Consultation />} />
+            <Route path="/consultation-links" element={<ConsultationLinks />} />
+            <Route path="/test-history" element={<TestHistory />} />
           </Routes>
           <Footer />
         </div>
