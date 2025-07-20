@@ -21,9 +21,11 @@ import {
   ClockCircleOutlined, 
   PlusOutlined, 
   UserOutlined,
-  BookOutlined 
+  BookOutlined,
+  LinkOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import BookingService from '../services/BookingService';
 import ParentService from '../services/ParentService';
 import moment from 'moment';
@@ -35,6 +37,7 @@ const { Option } = Select;
 
 function Consultation() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [children, setChildren] = useState([]);
   const [selectedChild, setSelectedChild] = useState(null);
@@ -230,13 +233,32 @@ function Consultation() {
             )}
 
             {user.role === 'STUDENT' && (
+              <Space>
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => setModalVisible(true)}
+                  className="create-booking-btn"
+                >
+                  Book Consultation
+                </Button>
+                <Button 
+                  icon={<LinkOutlined />}
+                  onClick={() => navigate('/consultation-links')}
+                  className="view-links-btn"
+                >
+                  View Consultation Links
+                </Button>
+              </Space>
+            )}
+
+            {user.role === 'PARENT' && (
               <Button 
-                type="primary" 
-                icon={<PlusOutlined />}
-                onClick={() => setModalVisible(true)}
-                className="create-booking-btn"
+                icon={<LinkOutlined />}
+                onClick={() => navigate('/consultation-links')}
+                className="view-links-btn"
               >
-                Book Consultation
+                View Consultation Links
               </Button>
             )}
           </div>

@@ -15,6 +15,7 @@ import StudentPage from "./components/StudentPage";
 import AboutUs from './components/AboutUs';
 import TestHistory from './components/TestHistory';
 import Consultation from './components/Consultation';
+import ConsultationLinks from './components/ConsultationLinks';
 import 'antd/dist/reset.css';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/student" element={<StudentPage />} />
             <Route path="/consultation" element={<Consultation />} />
+            <Route path="/consultation-links" element={<ConsultationLinks />} />
             <Route path="/test-history" element={<TestHistory />} />
           </Routes>
           <Footer />
