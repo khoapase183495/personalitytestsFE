@@ -23,21 +23,24 @@
 }
 
 /* Profile Header */
+/* Profile Header */
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem; /* Reduce gap for tighter layout */
+  margin-bottom: 2rem;
 }
 
 .profile-avatar {
-  background: linear-gradient(135deg, #3d348b 0%, #7209b7 100%) !important;
   flex-shrink: 0;
-  box-shadow: 0 4px 16px rgba(61, 52, 139, 0.3);
 }
 
 .profile-header-info {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  max-width: 350px; /* Adjust as needed for your design */
 }
 
 .profile-name {

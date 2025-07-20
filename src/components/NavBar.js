@@ -43,12 +43,26 @@ function NavBar() {
               About Us
             </Link>
           </div>
+          <div className="nav-item">
+            {(user?.role === "STUDENT" || user?.role === "PARENT") && (
+              <Link to="/consultation" className="nav-link">
+                Consultation
+              </Link>
+            )}
+          </div>
+          <div className="nav-item">
+            {(user?.role === "STUDENT" || user?.role === "PARENT") && (
+              <Link to="/test-history" className="nav-link">
+                Test History
+              </Link>
+            )}
+          </div>
         </div>
         <div className="nav-auth">
           {isAuthenticated ? (
             <div className="user-menu">
               <span className="user-name">
-                Hello, {user?.username}
+                Hello, {user?.fullName}
               </span>
               {isAuthenticated && (
           <button

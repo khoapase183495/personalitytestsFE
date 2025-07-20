@@ -13,6 +13,8 @@ import TestResults from './components/tests/TestResults';
 import UserProfile from './components/UserProfile';
 import StudentPage from "./components/StudentPage";
 import AboutUs from './components/AboutUs';
+import TestHistory from './components/TestHistory';
+import Consultation from './components/Consultation';
 import 'antd/dist/reset.css';
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/student" element={<StudentPage />} />
+            <Route path="/consultation" element={<Consultation />} />
+            <Route path="/test-history" element={<TestHistory />} />
           </Routes>
           <Footer />
         </div>

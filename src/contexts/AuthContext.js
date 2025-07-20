@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
             id: currentUser.id,
             email: currentUser.email,
             phone: currentUser.phone,
-            username: currentUser.username,
+            fullName: currentUser.fullName,
             role: currentUser.role,
             token: currentUser.token || token,
           };
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
         id: response.id,
         email: response.email,
         phone: response.phone,
-        username: response.username,
+        fullName: response.fullName,
         role: response.role,
         token: response.token,
       };

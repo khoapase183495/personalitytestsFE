@@ -63,7 +63,7 @@ function UserProfile() {
       const updatedUser = {
         ...user,
         email: values.email,
-        username: values.username,
+        fullName: values.fullName,
         phone: values.phone,
       };
       localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -124,24 +124,24 @@ function UserProfile() {
       <div className="profile-wrapper">
         <Card className="user-profile-card">
           <div className="profile-header">
-            <Avatar 
-              size={80} 
-              icon={<UserOutlined />} 
-              className="profile-avatar"
-            />
-            <div className="profile-header-info">
-              <Title level={2} className="profile-name">
-                {user.username || user.email}
-              </Title>
-              <Tag 
-                icon={getRoleIcon(user.role)}
-                color={getRoleColor(user.role)}
-                className="profile-role-tag"
-              >
-                {user.role?.name || user.role || "User"}
-              </Tag>
-            </div>
-          </div>
+  <Avatar 
+    size={80} 
+    icon={<UserOutlined />} 
+    className="profile-avatar"
+  />
+  <div className="profile-header-info">
+    <Title level={2} className="profile-name">
+      {user.fullName}
+    </Title>
+    <Tag 
+      icon={getRoleIcon(user.role)}
+      color={getRoleColor(user.role)}
+      className="profile-role-tag"
+    >
+      {user.role?.name || user.role || "User"}
+    </Tag>
+  </div>
+</div>
 
           <Divider className="profile-divider" />
 
@@ -164,7 +164,7 @@ function UserProfile() {
                   <div>
                     <Text className="profile-detail-label">Username</Text>
                     <Paragraph className="profile-detail-value">
-                      {user.username || user.email}
+                      {user.fullName}
                     </Paragraph>
                   </div>
                 </div>
