@@ -50,6 +50,7 @@ function NavBar() {
               <span className="user-name">
                 Hello, {user?.fullname || user?.username || user?.email}
                 {isAdmin && <span className="admin-badge"> (Admin)</span>}
+                
               </span>
               <button onClick={handleLogout} className="logout-button">
                 Logout

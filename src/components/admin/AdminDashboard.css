@@ -29,6 +29,13 @@
   margin: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-header-center {
+  text-align: center;
 }
 
 .admin-header h1 {

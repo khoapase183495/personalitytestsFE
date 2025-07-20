@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Tabs, Table, Button, Modal, Form, Input, Select, message, Space, Popconfirm } from 'antd';
-import { UserOutlined, FileTextOutlined, PlusOutlined, EditOutlined, EyeOutlined, SearchOutlined, DeleteOutlined, QuestionCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { UserOutlined, FileTextOutlined, PlusOutlined, EditOutlined, EyeOutlined, SearchOutlined, DeleteOutlined, QuestionCircleOutlined, ArrowLeftOutlined, StarOutlined, CalendarOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useAuth } from '../../contexts/AuthContext';
 import AdminUserService from '../../services/AdminUserService';
 import AdminTestService from '../../services/AdminTestService';
 import AdminQuestionService from '../../services/AdminQuestionService';
+import FeedbackManagement from './FeedbackManagement/FeedbackManagement';
+import BookingManagement from './BookingManagement/BookingManagement';
+import ConsultationManagement from './ConsultationManagement/ConsultationManagement';
 import './AdminDashboard.css';
 
 const { TabPane } = Tabs;
@@ -23,6 +26,7 @@ function AdminDashboard() {
   const [userModalVisible, setUserModalVisible] = useState(false);
   const [testModalVisible, setTestModalVisible] = useState(false);
   const [questionModalVisible, setQuestionModalVisible] = useState(false);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [editingTest, setEditingTest] = useState(null);
   const [editingQuestion, setEditingQuestion] = useState(null);
@@ -39,6 +43,7 @@ function AdminDashboard() {
   const [form] = Form.useForm();
   const [testForm] = Form.useForm();
   const [questionForm] = Form.useForm();
+  const [profileForm] = Form.useForm();
 
   useEffect(() => {
     loadUsers();
@@ -46,17 +51,37 @@ function AdminDashboard() {
     loadStats();
   }, []);
 
-  const loadUsers = async () => {
+  const loadUsers = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
+      console.log('Loading users...');
       const response = await AdminUserService.getAllUsers();
-      setUsers(response);
+      
+      if (!response || !Array.isArray(response)) {
+        console.error('Invalid response from getAllUsers:', response);
+        message.error('Invalid response from server');
+        return;
+      }
+      
+      // Sort users by ID in descending order to show newest first
+      const sortedUsers = response.sort((a, b) => b.id - a.id);
+      
+      // Map fields to ensure consistency between backend and frontend
+      const mappedUsers = sortedUsers.map(user => ({
+        ...user,
+        // Ensure fullname is set from either backend fullName or fullname field
+        fullname: user.fullName || user.fullname || user.username || '',
+      }));
+      
+      setUsers(mappedUsers);
       
       // Calculate stats from users data
-      const totalUsers = response.length;
-      const adminCount = response.filter(u => u.role === 'ADMIN').length;
-      const parentCount = response.filter(u => u.role === 'PARENT').length;
-      const studentCount = response.filter(u => u.role === 'STUDENT').length;
+      const totalUsers = mappedUsers.length;
+      const adminCount = mappedUsers.filter(u => u.role === 'ADMIN').length;
+      const parentCount = mappedUsers.filter(u => u.role === 'PARENT').length;
+      const studentCount = mappedUsers.filter(u => u.role === 'STUDENT').length;
       
       setStats({
         totalUsers,
@@ -64,11 +89,16 @@ function AdminDashboard() {
         parentCount,
         studentCount
       });
+      
+      console.log('Users loaded successfully:', mappedUsers.length, 'users');
+      console.log('Latest user ID:', mappedUsers[0]?.id);
     } catch (error) {
-      message.error('Failed to load users');
+      message.error('Failed to load users: ' + error.message);
       console.error('Error loading users:', error);
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   };
 
@@ -114,8 +144,20 @@ function AdminDashboard() {
     setUserModalVisible(true);
   };
 
-  // Delete function temporarily removed - backend endpoint not available
-  // const handleDeleteUser = async (userId) => { ... }
+  // Delete function
+  const handleDeleteUser = async (userId) => {
+    try {
+      await AdminUserService.deleteUser(userId);
+      message.success('User deleted successfully');
+      
+      // Reload data after successful operation (same as TestManagement)
+      await loadUsers(false);
+      await loadStats();
+    } catch (error) {
+      message.error('Failed to delete user: ' + error.message);
+      console.error('Error deleting user:', error);
+    }
+  };
 
   const handleViewUser = (userId) => {
     // Navigate to dedicated user details page
@@ -291,11 +333,52 @@ function AdminDashboard() {
     }
   };
 
+  // Profile Management Functions
+  const handleEditProfile = () => {
+    setProfileModalVisible(true);
+    // Set current user data to form
+    setTimeout(() => {
+      profileForm.setFieldsValue({
+        fullname: user?.fullname || user?.username || '',
+        email: user?.email || '',
+        phone: user?.phone || ''
+      });
+    }, 0);
+  };
+
+  const handleSubmitProfile = async (values) => {
+    try {
+      // Validate phone number format (Vietnamese phone numbers)
+      const phoneRegex = /^(84|0[3|5|7|8|9])(\d{8})$/;
+      if (values.phone && !phoneRegex.test(values.phone)) {
+        message.error('Please enter a valid Vietnamese phone number');
+        return;
+      }
+
+      const updateData = {
+        fullname: values.fullname,
+        username: values.fullname,
+        phone: values.phone,
+        email: user.email // Keep original email
+      };
+      
+      await AdminUserService.updateUser(user.id, updateData);
+      message.success('Profile updated successfully');
+      
+      setProfileModalVisible(false);
+      profileForm.resetFields();
+      
+      // Optionally reload user data or update context
+      console.log('Profile updated for user:', user.id);
+    } catch (error) {
+      message.error('Failed to update profile: ' + error.message);
+      console.error('Error updating profile:', error);
+    }
+  };
+
   // User Management Functions
   const handleSubmitUser = async (values) => {
     try {
-      setLoading(true);
-      
       // Validate phone number format (Vietnamese phone numbers)
       const phoneRegex = /^(84|0[3|5|7|8|9])(\d{8})$/;
       if (values.phone && !phoneRegex.test(values.phone)) {
@@ -312,32 +395,41 @@ function AdminDashboard() {
       }
 
       if (editingUser) {
-        // Update existing user - sending the same format as successful Swagger test
+        // Update existing user
         const updateData = {
           fullname: values.fullname,
-          username: values.fullname, // Add username field
+          username: values.fullname,
           phone: values.phone,
-          email: editingUser.email // Include email from existing user
+          email: editingUser.email
         };
-        console.log('Updating user with data:', updateData);
-        console.log('User ID:', editingUser.id);
+        
         await AdminUserService.updateUser(editingUser.id, updateData);
         message.success('User updated successfully');
       } else {
         // Create new user
-        await AdminUserService.createUser(values);
+        const createData = {
+          ...values,
+          fullName: values.fullname,
+          username: values.fullname
+        };
+        
+        await AdminUserService.createUser(createData);
         message.success('User created successfully');
+        console.log('User creation completed, starting refresh...');
       }
       
       setUserModalVisible(false);
       form.resetFields();
-      loadUsers();
+      setEditingUser(null);
+      
+      // Reload data after successful operation (same as TestManagement)
+      await loadUsers(false);
+      await loadStats();
+      console.log('User refresh completed!');
     } catch (error) {
       const errorMessage = error.message || (editingUser ? 'Failed to update user' : 'Failed to create user');
       message.error(errorMessage);
       console.error('Error saving user:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -350,7 +442,10 @@ function AdminDashboard() {
     
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
     
-    return matchesSearch && matchesRole;
+    // Hide all users with ADMIN role
+    const isNotAdmin = user.role !== 'ADMIN';
+    
+    return matchesSearch && matchesRole && isNotAdmin;
   });
 
   const userColumns = [
@@ -414,8 +509,6 @@ function AdminDashboard() {
           >
             Edit
           </Button>
-          {/* Delete button temporarily removed - backend endpoint not available */}
-          {/* 
           <Popconfirm
             title="Are you sure you want to delete this user?"
             onConfirm={() => handleDeleteUser(record.id)}
@@ -432,7 +525,6 @@ function AdminDashboard() {
               Delete
             </Button>
           </Popconfirm>
-          */}
         </Space>
       ),
     },
@@ -568,8 +660,19 @@ function AdminDashboard() {
   return (
     <div className="admin-dashboard">
       <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, {user?.fullname || user?.username || user?.email}</p>
+        <div>
+          <h1>Admin Dashboard</h1>
+          <p>Welcome back, {user?.fullname || user?.username || user?.email}</p>
+          <Button 
+          icon={<EditOutlined />} 
+          onClick={handleEditProfile}
+          type="default"
+          size="large"
+        >
+          Edit Profile
+        </Button>
+        </div>
+        
       </div>
 
       <div className="admin-content">
@@ -758,6 +861,42 @@ function AdminDashboard() {
                 </div>
               )}
             </Card>
+          </TabPane>
+
+          <TabPane
+            tab={
+              <span>
+                <StarOutlined />
+                Feedback Management
+              </span>
+            }
+            key="feedback"
+          >
+            <FeedbackManagement />
+          </TabPane>
+
+          <TabPane
+            tab={
+              <span>
+                <CalendarOutlined />
+                Booking Management
+              </span>
+            }
+            key="booking"
+          >
+            <BookingManagement />
+          </TabPane>
+
+          <TabPane
+            tab={
+              <span>
+                <VideoCameraOutlined />
+                Consultation Management
+              </span>
+            }
+            key="consultation"
+          >
+            <ConsultationManagement />
           </TabPane>
         </Tabs>
       </div>
@@ -981,6 +1120,74 @@ function AdminDashboard() {
                 setQuestionModalVisible(false);
                 questionForm.resetFields();
                 setEditingQuestion(null);
+              }}>
+                Cancel
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Profile Modal */}
+      <Modal
+        title="Edit Admin Profile"
+        open={profileModalVisible}
+        onCancel={() => {
+          setProfileModalVisible(false);
+          profileForm.resetFields();
+        }}
+        footer={null}
+        width={600}
+        className="admin-modal"
+      >
+        <Form
+          form={profileForm}
+          layout="vertical"
+          onFinish={handleSubmitProfile}
+          className="admin-form"
+        >
+          <Form.Item
+            label="Full Name"
+            name="fullname"
+            rules={[
+              { required: true, message: 'Please enter full name' },
+              { min: 2, message: 'Full name must be at least 2 characters' },
+              { max: 100, message: 'Full name must not exceed 100 characters' }
+            ]}
+          >
+            <Input placeholder="Enter full name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Please enter email' },
+              { type: 'email', message: 'Please enter a valid email address' }
+            ]}
+          >
+            <Input placeholder="Enter email" disabled />
+          </Form.Item>
+
+          <Form.Item
+            label="Phone"
+            name="phone"
+            rules={[
+              { required: true, message: 'Please enter phone number' },
+              { pattern: /^(84|0[3|5|7|8|9])(\d{8})$/, message: 'Please enter a valid Vietnamese phone number (e.g., 0987654321 or 84987654321)' }
+            ]}
+          >
+            <Input placeholder="Enter phone number (e.g., 0987654321)" />
+          </Form.Item>
+
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                Update Profile
+              </Button>
+              <Button onClick={() => {
+                setProfileModalVisible(false);
+                profileForm.resetFields();
               }}>
                 Cancel
               </Button>
