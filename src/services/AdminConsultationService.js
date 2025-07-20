@@ -1,7 +1,7 @@
 // API Service for consultation management
 const API_BASE_URL = 'http://localhost:8080';
 
-class ConsultationService {
+class AdminConsultationService {
   // Create meeting consultation
   static async createMeeting(consultationData) {
     try {
@@ -23,9 +23,9 @@ class ConsultationService {
         scheduledTime: new Date(consultationData.scheduledTime).toISOString()
       };
       
-      console.log('ConsultationService: Creating meeting with formatted data:', requestData);
-      console.log('ConsultationService: Request headers:', headers);
-      console.log('ConsultationService: API URL:', `${API_BASE_URL}/api/consulation/create-meeting`);
+      console.log('AdminConsultationService: Creating meeting with formatted data:', requestData);
+      console.log('AdminConsultationService: Request headers:', headers);
+      console.log('AdminConsultationService: API URL:', `${API_BASE_URL}/api/consulation/create-meeting`);
       
       const response = await fetch(`${API_BASE_URL}/api/consulation/create-meeting`, {
         method: 'POST',
@@ -33,15 +33,15 @@ class ConsultationService {
         body: JSON.stringify(requestData)
       });
 
-      console.log('ConsultationService: Response status:', response.status);
-      console.log('ConsultationService: Response headers:', response.headers);
+      console.log('AdminConsultationService: Response status:', response.status);
+      console.log('AdminConsultationService: Response headers:', response.headers);
 
       if (!response.ok) {
         let errorMessage = 'Failed to create meeting';
         
         try {
           const errorText = await response.text();
-          console.error('ConsultationService: Backend error response:', errorText);
+          console.error('AdminConsultationService: Backend error response:', errorText);
           
           if (response.status === 400) {
             errorMessage = 'Invalid meeting data - ' + errorText;
@@ -57,7 +57,7 @@ class ConsultationService {
             errorMessage = errorText || errorMessage;
           }
         } catch (parseError) {
-          console.error('ConsultationService: Error parsing error response:', parseError);
+          console.error('AdminConsultationService: Error parsing error response:', parseError);
           errorMessage = `HTTP ${response.status}: ${response.statusText}`;
         }
         
@@ -65,11 +65,11 @@ class ConsultationService {
       }
 
       const data = await response.json();
-      console.log('ConsultationService: Meeting created successfully:', data);
+      console.log('AdminConsultationService: Meeting created successfully:', data);
       return data;
       
     } catch (error) {
-      console.error('ConsultationService: Error creating meeting:', error);
+      console.error('AdminConsultationService: Error creating meeting:', error);
       throw error;
     }
   }
@@ -86,14 +86,14 @@ class ConsultationService {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      console.log('ConsultationService: Fetching all consultations...');
+      console.log('AdminConsultationService: Fetching all consultations...');
       
       const response = await fetch(`${API_BASE_URL}/api/consulation/all`, {
         method: 'GET',
         headers: headers
       });
 
-      console.log('ConsultationService: GetAll response status:', response.status);
+      console.log('AdminConsultationService: GetAll response status:', response.status);
 
       if (!response.ok) {
         let errorMessage = `HTTP Error ${response.status}`;
@@ -108,7 +108,7 @@ class ConsultationService {
       }
 
       const data = await response.json();
-      console.log('ConsultationService: Raw backend data:', data);
+      console.log('AdminConsultationService: Raw backend data:', data);
       
       // Transform data to match frontend expectations
       const transformedData = data.map(consultation => ({
@@ -122,14 +122,14 @@ class ConsultationService {
         _original: consultation
       }));
       
-      console.log('ConsultationService: Transformed consultations:', transformedData);
+      console.log('AdminConsultationService: Transformed consultations:', transformedData);
       return transformedData;
       
     } catch (error) {
-      console.error('ConsultationService: Error fetching consultations:', error);
+      console.error('AdminConsultationService: Error fetching consultations:', error);
       throw error;
     }
   }
 }
 
-export default ConsultationService;
+export default AdminConsultationService;
