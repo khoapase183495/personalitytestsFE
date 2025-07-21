@@ -1,0 +1,178 @@
+/* Test Management Styles */
+.test-management-container {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.test-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.test-management-header h2 {
+  margin: 0;
+  color: #1890ff;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+/* Statistics Cards */
+.ant-card .ant-statistic {
+  text-align: center;
+}
+
+.ant-statistic-title {
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.ant-statistic-content {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styles */
+.ant-table-thead > tr > th {
+  background: #fafafa;
+  font-weight: 600;
+  color: #262626;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f0f9ff;
+}
+
+/* Action Buttons */
+.ant-btn-sm {
+  border-radius: 6px;
+}
+
+.ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.ant-btn-danger {
+  background: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.ant-btn-danger:hover {
+  background: #ff7875;
+  border-color: #ff7875;
+}
+
+/* Tags */
+.ant-tag {
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Modal Styles */
+.ant-modal-header {
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.ant-modal-title {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.ant-input, .ant-input:focus {
+  border-radius: 6px;
+}
+
+.ant-input:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .test-management-container {
+    padding: 16px;
+  }
+  
+  .test-management-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .test-management-header h2 {
+    text-align: center;
+  }
+  
+  .ant-statistic-content {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .test-management-container {
+    padding: 12px;
+  }
+  
+  .ant-card {
+    margin-bottom: 16px;
+  }
+  
+  .ant-table-pagination {
+    text-align: center;
+  }
+}
+
+/* Loading States */
+.ant-spin-container {
+  min-height: 200px;
+}
+
+/* Empty State */
+.ant-empty {
+  padding: 40px 20px;
+}
+
+/* Card Hover Effect */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.ant-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Status Icons */
+.anticon {
+  margin-right: 4px;
+}

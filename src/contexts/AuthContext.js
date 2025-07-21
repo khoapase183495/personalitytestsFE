@@ -18,8 +18,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        //AuthService.logout();
-
         const currentUser = AuthService.getCurrentUser();
         const token = AuthService.getToken();
 
@@ -28,7 +26,8 @@ export const AuthProvider = ({ children }) => {
             id: currentUser.id,
             email: currentUser.email,
             phone: currentUser.phone,
-            fullName: currentUser.fullName,
+            username: currentUser.username || currentUser.fullName,
+            fullname: currentUser.fullName || currentUser.username,
             role: currentUser.role,
             token: currentUser.token || token,
           };
@@ -44,7 +43,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
-  }, []);  const login = async (loginData) => {
+  }, []);
+
+  const login = async (loginData) => {
     try {
       setLoading(true);
       const response = await AuthService.login(loginData);
@@ -52,7 +53,8 @@ export const AuthProvider = ({ children }) => {
         id: response.id,
         email: response.email,
         phone: response.phone,
-        fullName: response.fullName,
+        username: response.username || response.fullName,
+        fullname: response.fullName || response.username,
         role: response.role,
         token: response.token,
       };
@@ -79,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
   const logout = () => {
     AuthService.logout();
     setUser(null);
@@ -91,6 +94,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     isAuthenticated: !!user,
+    isAdmin: user?.role === 'ADMIN',
+    isParent: user?.role === 'PARENT',
+    isStudent: user?.role === 'STUDENT',
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
