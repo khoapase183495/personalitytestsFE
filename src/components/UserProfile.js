@@ -55,6 +55,16 @@ function UserProfile() {
   const handleEditSubmit = async (values) => {
     setEditLoading(true);
     try {
+      // Check if email is being changed and if it already exists
+      if (values.email !== user.email) {
+        const emailExists = await ProfileService.checkEmailExists(values.email, user.id);
+        if (emailExists) {
+          message.error("Email already registered. Please use a different email.");
+          setEditLoading(false);
+          return;
+        }
+      }
+
       await ProfileService.updateAccount(user.id, values);
       message.success("Profile updated successfully!");
       setEditVisible(false);
@@ -95,7 +105,7 @@ function UserProfile() {
   const openEditModal = () => {
     editForm.setFieldsValue({
       email: user.email,
-      username: user.username,
+      fullName: user.fullName, // Changed from username to fullName
       phone: user.phone || "",
     });
     setEditVisible(true);
@@ -131,7 +141,7 @@ function UserProfile() {
   />
   <div className="profile-header-info">
     <Title level={2} className="profile-name">
-      {user.fullName}
+      {user.fullName || user.email || "User"}
     </Title>
     <Tag 
       icon={getRoleIcon(user.role)}
@@ -162,9 +172,9 @@ function UserProfile() {
                 <div className="profile-detail-item">
                   <UserOutlined className="profile-detail-icon" />
                   <div>
-                    <Text className="profile-detail-label">Username</Text>
+                    <Text className="profile-detail-label">Full Name</Text>
                     <Paragraph className="profile-detail-value">
-                      {user.fullName}
+                      {user.fullName || "Not provided"}
                     </Paragraph>
                   </div>
                 </div>
@@ -246,13 +256,13 @@ function UserProfile() {
           </Form.Item>
 
           <Form.Item
-            name="username"
-            label="Username"
-            rules={[{ required: true, message: "Please enter your username" }]}
+            name="fullName"
+            label="Full Name"
+            rules={[{ required: true, message: "Please enter your full name" }]}
           >
             <Input 
               prefix={<UserOutlined />} 
-              placeholder="Enter your username"
+              placeholder="Enter your full name"
               size="large"
             />
           </Form.Item>
@@ -316,12 +326,39 @@ function UserProfile() {
             label="New Password"
             rules={[
               { required: true, message: "Please enter your new password" },
-              { min: 6, message: "Password must be at least 6 characters" }
+              { min: 8, message: "Password must be at least 8 characters long" },
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.resolve();
+                  
+                  // Check for uppercase letter
+                  if (!/[A-Z]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 uppercase letter'));
+                  }
+                  
+                  // Check for lowercase letter
+                  if (!/[a-z]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 lowercase letter'));
+                  }
+                  
+                  // Check for number
+                  if (!/[0-9]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 number'));
+                  }
+                  
+                  // Check for special character
+                  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 special character'));
+                  }
+                  
+                  return Promise.resolve();
+                },
+              },
             ]}
           >
             <Input.Password 
               prefix={<KeyOutlined />}
-              placeholder="Enter new password"
+              placeholder="Enter new password (8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)"
               size="large"
             />
           </Form.Item>

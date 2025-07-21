@@ -83,8 +83,9 @@ function NavBar() {
           {isAuthenticated ? (
             <div className="user-menu">
               <span className="user-name">
-                Hello, {user?.fullName || user?.fullname || user?.username || user?.email}
-                {isAdmin && <span className="admin-badge"> (Admin)</span>}
+Hello, {user?.fullName || user?.fullname || user?.username || user?.email || "User"}
+{isAdmin && <span className="admin-badge"> (Admin)</span>}
+
               </span>
               <button
                 className="profile-button"
