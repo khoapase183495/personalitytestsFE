@@ -55,11 +55,11 @@ function UserProfile() {
   const handleEditSubmit = async (values) => {
     setEditLoading(true);
     try {
-      // Check if the new email already exists (excluding current user)
+      // Check if email is being changed and if it already exists
       if (values.email !== user.email) {
         const emailExists = await ProfileService.checkEmailExists(values.email, user.id);
         if (emailExists) {
-          message.error("Email already registered. Please use a different email address.");
+          message.error("Email already registered. Please use a different email.");
           setEditLoading(false);
           return;
         }
@@ -326,12 +326,39 @@ function UserProfile() {
             label="New Password"
             rules={[
               { required: true, message: "Please enter your new password" },
-              { min: 6, message: "Password must be at least 6 characters" }
+              { min: 8, message: "Password must be at least 8 characters long" },
+              {
+                validator: (_, value) => {
+                  if (!value) return Promise.resolve();
+                  
+                  // Check for uppercase letter
+                  if (!/[A-Z]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 uppercase letter'));
+                  }
+                  
+                  // Check for lowercase letter
+                  if (!/[a-z]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 lowercase letter'));
+                  }
+                  
+                  // Check for number
+                  if (!/[0-9]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 number'));
+                  }
+                  
+                  // Check for special character
+                  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value)) {
+                    return Promise.reject(new Error('Password must contain at least 1 special character'));
+                  }
+                  
+                  return Promise.resolve();
+                },
+              },
             ]}
           >
             <Input.Password 
               prefix={<KeyOutlined />}
-              placeholder="Enter new password"
+              placeholder="Enter new password (8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char)"
               size="large"
             />
           </Form.Item>

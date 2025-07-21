@@ -41,8 +41,29 @@ function Register() {
       return 'Password confirmation does not match';
     }
     
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long';
+    // Enhanced password validation
+    if (password.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    
+    // Check for uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      return 'Password must contain at least 1 uppercase letter';
+    }
+    
+    // Check for lowercase letter
+    if (!/[a-z]/.test(password)) {
+      return 'Password must contain at least 1 lowercase letter';
+    }
+    
+    // Check for number
+    if (!/[0-9]/.test(password)) {
+      return 'Password must contain at least 1 number';
+    }
+    
+    // Check for special character
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+      return 'Password must contain at least 1 special character (!@#$%^&*()_+-=[]{}|;:,.<>?)';
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,12 +90,12 @@ function Register() {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      // Check if email already exists in database
+      // Check if email already exists
       const emailExists = await ProfileService.checkEmailExists(state.formData.email);
       if (emailExists) {
         setState(prev => ({ 
           ...prev, 
-          error: "Email already registered. Please use a different email address.",
+          error: 'Email already registered. Please use a different email.',
           isLoading: false
         }));
         return;
@@ -176,9 +197,12 @@ function Register() {
                 name="password"
                 value={state.formData.password}
                 onChange={handleInputChange}
-                placeholder="Enter password"
+                placeholder="8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
                 required
               />
+              <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                Must contain: 8+ characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+              </small>
             </div>
 
             <div className="form-group">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input, Button, Table, message, Modal, Form } from "antd";
 import ParentService from "../services/ParentService";
+import ProfileService from "../services/ProfileService";
 import { useAuth } from "../contexts/AuthContext";
 
 function StudentPage() {
@@ -53,6 +54,22 @@ function StudentPage() {
     
     setAddLoading(true);
     try {
+      // Check if email exists and belongs to a STUDENT
+      const studentCheck = await ProfileService.checkStudentEmailExists(addEmail);
+      
+      if (!studentCheck.exists) {
+        message.error(studentCheck.message);
+        setAddLoading(false);
+        return;
+      }
+      
+      if (!studentCheck.isStudent) {
+        message.error(studentCheck.message);
+        setAddLoading(false);
+        return;
+      }
+
+      // If all validations pass, proceed with adding student
       const res = await ParentService.addStudentToParent(parentId, addEmail);
       message.success(res);
       setAddModalVisible(false);
