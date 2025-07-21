@@ -81,7 +81,7 @@ class ProfileService {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` }),
       },
-      body: JSON.stringify({ email, fullName, phone }),
+      body: JSON.stringify({ email, username: fullName, phone }),
     });
 
     if (!response.ok) {

@@ -29,7 +29,7 @@ import "./UserProfile.css";
 const { Title, Paragraph, Text } = Typography;
 
 function UserProfile() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [editVisible, setEditVisible] = useState(false);
   const [resetVisible, setResetVisible] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
@@ -69,18 +69,12 @@ function UserProfile() {
       message.success("Profile updated successfully!");
       setEditVisible(false);
 
-      // Update localStorage with new user info
-      const updatedUser = {
-        ...user,
+      // Update user context with new data
+      updateUser({
         email: values.email,
         fullName: values.fullName,
         phone: values.phone,
-      };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      });
     } catch (error) {
       message.error(error.message || "Failed to update profile.");
     } finally {
@@ -105,7 +99,7 @@ function UserProfile() {
   const openEditModal = () => {
     editForm.setFieldsValue({
       email: user.email,
-      fullName: user.fullName, // Changed from username to fullName
+      fullName: user.fullname || user.fullName || user.username || "", // Handle both naming conventions
       phone: user.phone || "",
     });
     setEditVisible(true);
