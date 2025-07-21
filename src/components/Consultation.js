@@ -163,7 +163,6 @@ function Consultation() {
             </Text>
           </Space>
         </div>
-        <Tag color="blue" className="booking-status">Active</Tag>
       </div>
       
       <Divider />

@@ -51,11 +51,6 @@ function NavBar() {
               )}
 
               <div className="nav-item">
-                <Link to="/articles" className="nav-link">
-                  Articles
-                </Link>
-              </div>
-              <div className="nav-item">
                 <Link to="/about" className="nav-link">
                   About Us
                 </Link>
