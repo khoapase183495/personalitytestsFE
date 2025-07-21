@@ -141,7 +141,7 @@ function UserProfile() {
   />
   <div className="profile-header-info">
     <Title level={2} className="profile-name">
-      {user.fullName || user.email || "User"}
+      {user.fullname || user.fullName || user.email || "User"}
     </Title>
     <Tag 
       icon={getRoleIcon(user.role)}
@@ -174,7 +174,7 @@ function UserProfile() {
                   <div>
                     <Text className="profile-detail-label">Full Name</Text>
                     <Paragraph className="profile-detail-value">
-                      {user.fullName || "Not provided"}
+                      {user.fullname || user.fullName || "Not provided"}
                     </Paragraph>
                   </div>
                 </div>

@@ -22,17 +22,15 @@ export const AuthProvider = ({ children }) => {
         const token = AuthService.getToken();
 
         if (currentUser && token) {
-          const userData = {
-            id: currentUser.id,
-            email: currentUser.email,
-            phone: currentUser.phone,
-            username: currentUser.username || currentUser.fullName,
-            fullname: currentUser.fullName || currentUser.username,
-            role: currentUser.role,
-            token: currentUser.token || token,
-          };
-
-          setUser(userData);
+      const userData = {
+        id: currentUser.id,
+        email: currentUser.email,
+        phone: currentUser.phone,
+        username: currentUser.username || currentUser.fullname || currentUser.fullName,
+        fullname: currentUser.fullname || currentUser.fullName || currentUser.username,
+        role: currentUser.role,
+        token: currentUser.token || token,
+      };          setUser(userData);
         }
       } catch (error) {
         console.error("Auth initialization error:", error);
@@ -53,8 +51,8 @@ export const AuthProvider = ({ children }) => {
         id: response.id,
         email: response.email,
         phone: response.phone,
-        username: response.username || response.fullName,
-        fullname: response.fullName || response.username,
+        username: response.username || response.fullname || response.fullName,
+        fullname: response.fullname || response.fullName || response.username,
         role: response.role,
         token: response.token,
       };
