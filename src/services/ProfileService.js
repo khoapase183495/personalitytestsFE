@@ -2,7 +2,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 class ProfileService {
   // Update user account info
-  static async updateAccount(userId, { email, username, phone }) {
+  static async updateAccount(userId, { email, fullName, phone }) {
   const token = localStorage.getItem('token');
   try {
     const response = await fetch(`${API_BASE_URL}/api/user/updateAccount/${userId}`, {
@@ -11,7 +11,7 @@ class ProfileService {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` }),
       },
-      body: JSON.stringify({ email, username, phone }),
+      body: JSON.stringify({ email, fullName, phone }),
     });
 
     if (!response.ok) {
@@ -67,6 +67,44 @@ class ProfileService {
     } catch (error) {
       console.error('ProfileService: resetPassword error:', error);
       throw error;
+    }
+  }
+
+  // Get all users to check for email conflicts
+  static async getAllUsers() {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('ProfileService: getAllUsers error:', error);
+      throw error;
+    }
+  }
+
+  // Check if email already exists (excluding current user for profile updates)
+  static async checkEmailExists(email, excludeUserId = null) {
+    try {
+      const users = await this.getAllUsers();
+      return users.some(user => 
+        user.email.toLowerCase() === email.toLowerCase() && 
+        user.id !== excludeUserId
+      );
+    } catch (error) {
+      console.error('ProfileService: checkEmailExists error:', error);
+      // If we can't check, assume it doesn't exist to avoid blocking valid operations
+      return false;
     }
   }
 }

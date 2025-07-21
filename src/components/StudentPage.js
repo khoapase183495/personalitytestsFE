@@ -43,6 +43,14 @@ function StudentPage() {
       message.error("Please enter student email.");
       return;
     }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(addEmail)) {
+      message.error("Please enter a valid email address.");
+      return;
+    }
+    
     setAddLoading(true);
     try {
       const res = await ParentService.addStudentToParent(parentId, addEmail);
@@ -51,7 +59,37 @@ function StudentPage() {
       setAddEmail("");
       fetchStudents();
     } catch (error) {
-      message.error(error.message || "Failed to add student.");
+      console.error("Add student error:", error);
+      
+      // Handle specific error cases
+      let errorMessage = "Failed to add student.";
+      
+      if (error.message) {
+        const errorText = error.message.toLowerCase();
+        
+        // Check for various "not found" error patterns
+        if (errorText.includes('not found') || 
+            errorText.includes('does not exist') || 
+            errorText.includes('no user found') ||
+            errorText.includes('user not found') ||
+            errorText.includes('no such user') ||
+            errorText.includes('student not found')) {
+          errorMessage = `There is no student with email "${addEmail}" in the database.`;
+        } else if (errorText.includes('already') && errorText.includes('parent')) {
+          errorMessage = "This student is already linked to a parent.";
+        } else if (errorText.includes('already') && errorText.includes('child')) {
+          errorMessage = "This student is already your child.";
+        } else if (errorText.includes('unauthorized') || errorText.includes('permission')) {
+          errorMessage = "You don't have permission to add this student.";
+        } else if (errorText.includes('invalid email')) {
+          errorMessage = "Please enter a valid email address.";
+        } else {
+          // Use the original error message if it's meaningful
+          errorMessage = error.message;
+        }
+      }
+      
+      message.error(errorMessage);
     } finally {
       setAddLoading(false);
     }

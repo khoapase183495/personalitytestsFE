@@ -62,7 +62,7 @@ function NavBar() {
           {isAuthenticated ? (
             <div className="user-menu">
               <span className="user-name">
-                Hello, {user?.fullName}
+                Hello, {user?.fullName || user?.email || "User"}
               </span>
               {isAuthenticated && (
           <button

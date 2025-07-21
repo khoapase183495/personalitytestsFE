@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import ProfileService from '../../services/ProfileService';
 import './Register.css';
 
 function Register() {
@@ -63,9 +64,23 @@ function Register() {
     if (validationError) {
       setState(prev => ({ ...prev, error: validationError }));
       return;
-    }    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    }
 
-    try {      await register({
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+
+    try {
+      // Check if email already exists in database
+      const emailExists = await ProfileService.checkEmailExists(state.formData.email);
+      if (emailExists) {
+        setState(prev => ({ 
+          ...prev, 
+          error: "Email already registered. Please use a different email address.",
+          isLoading: false
+        }));
+        return;
+      }
+
+      await register({
         email: state.formData.email,
         password: state.formData.password,
         fullName: state.formData.fullName,

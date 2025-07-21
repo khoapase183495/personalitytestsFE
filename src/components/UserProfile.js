@@ -55,6 +55,16 @@ function UserProfile() {
   const handleEditSubmit = async (values) => {
     setEditLoading(true);
     try {
+      // Check if the new email already exists (excluding current user)
+      if (values.email !== user.email) {
+        const emailExists = await ProfileService.checkEmailExists(values.email, user.id);
+        if (emailExists) {
+          message.error("Email already registered. Please use a different email address.");
+          setEditLoading(false);
+          return;
+        }
+      }
+
       await ProfileService.updateAccount(user.id, values);
       message.success("Profile updated successfully!");
       setEditVisible(false);
@@ -95,7 +105,7 @@ function UserProfile() {
   const openEditModal = () => {
     editForm.setFieldsValue({
       email: user.email,
-      username: user.username,
+      fullName: user.fullName, // Changed from username to fullName
       phone: user.phone || "",
     });
     setEditVisible(true);
@@ -131,7 +141,7 @@ function UserProfile() {
   />
   <div className="profile-header-info">
     <Title level={2} className="profile-name">
-      {user.fullName}
+      {user.fullName || user.email || "User"}
     </Title>
     <Tag 
       icon={getRoleIcon(user.role)}
@@ -162,9 +172,9 @@ function UserProfile() {
                 <div className="profile-detail-item">
                   <UserOutlined className="profile-detail-icon" />
                   <div>
-                    <Text className="profile-detail-label">Username</Text>
+                    <Text className="profile-detail-label">Full Name</Text>
                     <Paragraph className="profile-detail-value">
-                      {user.fullName}
+                      {user.fullName || "Not provided"}
                     </Paragraph>
                   </div>
                 </div>
@@ -246,13 +256,13 @@ function UserProfile() {
           </Form.Item>
 
           <Form.Item
-            name="username"
-            label="Username"
-            rules={[{ required: true, message: "Please enter your username" }]}
+            name="fullName"
+            label="Full Name"
+            rules={[{ required: true, message: "Please enter your full name" }]}
           >
             <Input 
               prefix={<UserOutlined />} 
-              placeholder="Enter your username"
+              placeholder="Enter your full name"
               size="large"
             />
           </Form.Item>
