@@ -544,19 +544,6 @@ function AdminDashboard() {
       ellipsis: true,
     },
     {
-      title: 'Test ID',
-      dataIndex: 'testId',
-      key: 'testId',
-      width: 100,
-    },
-    {
-      title: 'Created At',
-      dataIndex: 'createAt',
-      key: 'createAt',
-      width: 120,
-      render: (date) => date ? new Date(date).toLocaleDateString() : 'N/A',
-    },
-    {
       title: 'Actions',
       key: 'actions',
       width: 120,
